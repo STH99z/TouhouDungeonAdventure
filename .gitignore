@@ -1,0 +1,16 @@
+# VS vbproj user settings
+*.user
+*.suo
+*.sln
+.vs/
+
+# Tools and resources in programing
+resources/charagen/
+resources/tile/
+resources/ÐÐ×ßÍ¼/
+
+# Compiling results
+obj/
+history/
+ART/
+bin/

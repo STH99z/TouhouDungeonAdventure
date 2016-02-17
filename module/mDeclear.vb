@@ -29,6 +29,9 @@
 
     Public mISrenderer As New cISrenderer
 
+    Public SE(48) As cSound
+    Public SEnames(48) As String
+
     'Enum DIRECTION
     ' 7   8   9
     '     ^

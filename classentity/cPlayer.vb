@@ -15,6 +15,12 @@
     Protected Friend sCharaName As String = "None"
     Protected Friend iClass As CharacterClass
 
+    Public Sub New()
+        MyBase.New()
+        'SetBasicAnimation
+        mAnim = New cAnim({13, 14, 15, 14}, 150)
+    End Sub
+
     Enum CharacterClass
         none = 0
         short_range = 1
@@ -24,15 +30,13 @@
         unknown = -1
     End Enum
 
-    Protected Friend Sub Init(Optional ByVal pRadius As Int16 = 4)
-        mAnim = New cAnim({13, 14, 15, 14}, 150)
+    Protected Friend Sub InitCollisionSetting(Optional ByVal pRadius As Int16 = 4)
         iRadius = pRadius
         iWidthHalf = iRadius
         iHeightHalf = iRadius
     End Sub
 
-    Protected Friend Sub Init(Optional ByVal pWidth As Int16 = 11, Optional ByVal pHeight As Int16 = 4)
-        mAnim = New cAnim({13, 14, 15, 14}, 150)
+    Protected Friend Sub InitCollisionSetting(Optional ByVal pWidth As Int16 = 11, Optional ByVal pHeight As Int16 = 4)
         iRadius = (pWidth + pHeight) / 2
         iWidthHalf = pWidth
         iHeightHalf = pHeight

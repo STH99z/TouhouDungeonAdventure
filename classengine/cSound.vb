@@ -11,7 +11,28 @@ Public Class cSound
     Public StopPosition As Double
     Public LoopMode As eLoopMode
     Public LoopStart As Double, LoopEnd As Double
-
+    ''' <summary>
+    ''' 通过ID获取已载入的SE
+    ''' </summary>
+    ''' <param name="ID">SE编号</param>
+    ''' <returns></returns>
+    Public Shared Function GetSE(ID As Int16) As cSound
+        Return SE(ID).MemberwiseClone()
+    End Function
+    ''' <summary>
+    ''' 通过名字获取已载入的SE
+    ''' </summary>
+    ''' <param name="Name">音频名字，不加se_和.wav</param>
+    ''' <returns></returns>
+    Public Shared Function GetSE(Name As String) As cSound
+        Dim i As Int16
+        For i = 1 To 48
+            If SEnames(i) = "se_" & Name & ".wav" Then
+                Return SE(i).MemberwiseClone()
+            End If
+        Next
+        Return Nothing
+    End Function
     ''' <summary>
     ''' 获取、设置音频当前位置
     ''' </summary>
@@ -55,7 +76,7 @@ Public Class cSound
     ''' <summary>
     ''' 顺便初始化的实例化
     ''' </summary>
-    ''' <param name="fn"></param>
+    ''' <param name="fn">音频文件地址，相对地址</param>
     Public Sub New(fn As String)
         Me.LoadFromPath(fn)
         LoopMode = eLoopMode.normal

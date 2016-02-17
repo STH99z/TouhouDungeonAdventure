@@ -7,6 +7,10 @@
     Protected Friend bIgnoreCollision_entity As Boolean = False
     Protected Friend bIgnoreCollision_map As Boolean = False
 
+    Public Sub New()
+
+    End Sub
+
     Protected Friend Shared Function fDirection2Angle(ByVal direction As Byte) As Single
         Select Case direction
             Case 1

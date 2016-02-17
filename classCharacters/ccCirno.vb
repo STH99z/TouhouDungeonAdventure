@@ -9,16 +9,19 @@
 
     Private Skl1dmkcount As Int16 = 0, Skl1frame As Int16 = 0, Skl1faceto As Single
 
+    Protected Friend Sub New()
+        MyBase.New()
+    End Sub
+
     Protected Friend Sub InitAll()
         sCharaName = "Cirno"
-        mTex = New cTex
+        mTex = New cTex()
         mTex.LoadGraph(d_image & "character\chara_07.png", 3, 5)
-        shootsound = New cSound(d_se & "se_tan00.wav")
-        sklsound = New cSound(d_se & "se_tan00.wav", 0.01, 0.026)
+        shootsound = cSound.GetSE("tan00")
+        sklsound = cSound.GetSE("tan00")
+        sklsound.SetLoopTiming(0.01, 0.026)
 
-        'sklsound.SetvolumeA(My.Resources.iSEVolume)
-        'mTexEff.LoadGraph(d_image & "particle\eff16x2.png", 16, 2)
-        Init(11, 4)
+        InitCollisionSetting(11, 4)
         iMoveSpeed = 2.3
         iClass = CharacterClass.support
     End Sub

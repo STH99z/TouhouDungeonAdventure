@@ -15,7 +15,7 @@
         mTexEff.LoadGraph(d_image & "particle\eff16x2.png", 16, 2)
         sklsound.LoadFromPath("se\se_slash.wav")
         sklsound.Volume = My.Resources.iSEVolume
-        Init(11, 4)
+        InitCollisionSetting(11, 4)
         iMoveSpeed = 2.6
         iMoveSpeedBase = 2.6
         iClass = CharacterClass.short_range

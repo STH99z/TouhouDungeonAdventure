@@ -14,6 +14,10 @@
     Protected Friend bCollision As Boolean = True
 
     Protected iUnderAttack As Int16 = 0
+
+    Public Sub New()
+        MyBase.New()
+    End Sub
     'Protected  Friend iCarry As citem
 
     Protected Friend Overridable Sub Move()

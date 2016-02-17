@@ -25,11 +25,9 @@ Public Class cSound
     ''' <param name="Name">音频名字，不加se_和.wav</param>
     ''' <returns></returns>
     Public Shared Function GetSE(Name As String) As cSound
-        Dim i As Int16
-        For i = 1 To 48
-            Return SEnames.Item("se_" & Name & ".wav")
-        Next
-        Return Nothing
+        Dim c As cSound
+        c = SEnames.Item("se_" & Name & ".wav")
+        Return c.MemberwiseClone()
     End Function
     ''' <summary>
     ''' 获取、设置音频当前位置

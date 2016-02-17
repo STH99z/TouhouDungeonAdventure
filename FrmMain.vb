@@ -85,61 +85,59 @@
             DrawEnemy()
             p1.DrawC()
             p1.DrawArea()
-            p1.DrawDmk()
+			p1.DrawDmk()
+			'DrawRect(0, 0, 10, 10, Color.FromArgb(0, 0, 0, 0))
 
-            EndGraph_Forced()
+			EndGraph_Forced()
 
             map.DrawMap_UpperLayer(p1)
-            'cEnemy.CollideBuffer_Visualize()
+			'cEnemy.CollideBuffer_Visualize()
 
-            DrawTextPoped()
+			DrawTextPoped()
 
             If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.NumPad0, False) Then
                 DrawRectF(0, ResH - 50, ResW, ResH, Color.FromArgb(196, Color.Black))
                 DrawText(p1.GetTilePos.ToString, 2, ResH - 48, Color.White)
             End If
 
-            If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.B, False) Then
-                mISrenderer.InitISrenderer_test()
-                mISrenderer.DrawBagSlots()
-            End If
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.B, False) Then
+				mISrenderer.InitISrenderer_test()
+				mISrenderer.DrawBagSlots()
+			End If
 
-            DrawText("FPS: " & mGraph.fFPS, 10, ResH - 22, Color.White)
+			p1.DrawHPbar(400 - 90, 300 - 40, 80, 10)
+			p1.DrawMPbar(400 - 90, 300 - 20, 80, 10)
+
+			DrawText("FPS: " & mGraph.fFPS, 10, ResH - 22, Color.White)
             DrawText("TotalFrames: " & fi.ToString(), 10, ResH - 42, Color.White)
             DrawText("Col_Enemy.Count: " & Col_Enemy.Count, 10, ResH - 62, Color.White)
 
             mGraph.EndDevice(False)
-            '————————绘制部分结束————————
+			'————————绘制部分结束————————
 #End Region
 
 #Region "按键检测"
-            '按键检测
-            If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.F5) Then
-                Dim ce As cEnemy
-                For i As Single = 0.5 To 6.28 Step 6.28 / 60
-                    ce = New cEnemy
-                    ce.iRadius = 7
-                    ce.HP = 20
-                    ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
-                    ce.SetPos(42 * 32 + Math.Cos(i) * 120 * Rnd(), 23 * 32 + Math.Sin(i) * 120 * Rnd())
-                    ce.Register()
-                Next
-            End If
-            'If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Z, False) Then p1.iMoveSpeed = 4
-            'If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.X, False) Then
-            '    Cam.X = p1.xPos
-            '    Cam.Y = p1.yPos
-            'End If
-            'p1.bCollision = Not mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.C, False)
-            If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Escape) Then
-                bStop = True
-                UnloadDXengine()
-                Application.Exit()
-                Exit Sub
-            End If
-
-            p1.Process()
-            p1.ProcessDmk()
+			'按键检测
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.F5) Then
+				Dim ce As cEnemy
+				For i As Single = 0.5 To 6.28 Step 6.28 / 60
+					ce = New cEnemy
+					ce.iRadius = 7
+					ce.HP = 20
+					ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
+					ce.SetPos(42 * 32 + Math.Cos(i) * 120, 23 * 32 + Math.Sin(i) * 120)
+					ce.Register()
+				Next
+			End If
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Escape) Then
+				bStop = True
+				UnloadDXengine()
+				Application.Exit()
+				Exit Sub
+			End If
+#End Region
+			p1.Move()
+			p1.ProcessDmk()
             p1.ProcessArea()
             p1.Shoot()
             p1.Skill_1()
@@ -151,11 +149,11 @@
             Cam.FocusOn(p1)
 
             RefreshKeyDX()
-#End Region
+
 
 #Region "帧控制"
-            '帧控制
-            If False Then
+			'帧控制
+			If False Then
                 Do Until mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.DownArrow, False) Or bStop
                     Application.DoEvents()
                 Loop

@@ -1,8 +1,10 @@
 ﻿Public Class cCreature
     Inherits cEntity
-    Protected Friend HP As Int16 = 1
-    Protected Friend MP As Int16 = 0
-    Protected Friend Lv As Int16
+	Protected Friend HP As Single = 1
+	Protected Friend HPmax As Single = 1
+	Protected Friend MP As Single = 0
+	Protected Friend MPmax As Single = 0
+	Protected Friend Lv As Int16
     Protected Friend iWidthHalf As Int16, iHeightHalf As Int16
     Protected Friend iMoveSpeedBase As Single = 1
     Protected Friend iMoveSpeed As Single = 1
@@ -132,13 +134,13 @@
         iUnderAttack = 11
     End Sub
 
-    Protected Friend Overridable Sub Update()
-        If iUnderAttack > 0 Then
-            iUnderAttack -= 1
-            mAnim.Args.iB = 255 - 25.5 * iUnderAttack
-            mAnim.Args.iG = 255 - 25.5 * iUnderAttack
-        End If
-    End Sub
+	Protected Friend Overridable Sub Update()
+		If iUnderAttack > 0 Then
+			iUnderAttack -= 1
+			mAnim.Args.iB = 255 - 25.5 * iUnderAttack
+			mAnim.Args.iG = 255 - 25.5 * iUnderAttack
+		End If
+	End Sub
 
 
 

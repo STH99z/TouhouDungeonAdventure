@@ -27,9 +27,7 @@ Public Class cSound
     Public Shared Function GetSE(Name As String) As cSound
         Dim i As Int16
         For i = 1 To 48
-            If SEnames(i) = "se_" & Name & ".wav" Then
-                Return SE(i).MemberwiseClone()
-            End If
+            Return SEnames.Item("se_" & Name & ".wav")
         Next
         Return Nothing
     End Function

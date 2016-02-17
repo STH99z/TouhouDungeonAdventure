@@ -121,14 +121,19 @@
     End Sub
 
     Public Sub LoadAllSE()
-        Dim sr As New IO.StreamReader(Application.StartupPath & "\" & d_data & "se_list.txt")
-        Dim i As Int16
-        For i = 1 To 48
-            Dim s As String
-            s = sr.ReadLine()
-            SE(i) = New cSound(d_se & s)
-            SEnames(i) = s
-        Next
+        SEnames = New Hashtable()
+        Try
+            Dim sr As New IO.StreamReader(Application.StartupPath & "\" & d_data & "se_list.txt")
+            Dim i As Int16
+            For i = 1 To 48
+                Dim s As String
+                s = sr.ReadLine()
+                SE(i) = New cSound(d_se & s)
+                SEnames.Add(s, SE(i))
+            Next
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
     End Sub
 
     Public Function EOF_Read() As Boolean

@@ -13,8 +13,8 @@
         sCharaName = "Cirno"
         mTex = New cTex
         mTex.LoadGraph(d_image & "character\chara_07.png", 3, 5)
-        sklsound = New cSound(d_se & "se_kira02.wav")
-        shootsound = New cSound(d_se & "se_kira02.wav")
+        shootsound = New cSound(d_se & "se_tan00.wav")
+        sklsound = New cSound(d_se & "se_tan00.wav", 0.01, 0.026)
 
         'sklsound.SetvolumeA(My.Resources.iSEVolume)
         'mTexEff.LoadGraph(d_image & "particle\eff16x2.png", 16, 2)
@@ -47,6 +47,7 @@
             End If
             Skl1frame = 100
             Skl1faceto = fDirection2Angle(iFaceTo)
+            sklsound.ForcePlay()
         End If
     End Sub
 
@@ -62,7 +63,7 @@
                 b.iLifeTime = 60
                 b.Register(Me.col_dmk)
                 Skl1frame -= 1
-                sklsound.ForcePlay()
+                sklsound.Loop()
             Next
         End If
     End Sub

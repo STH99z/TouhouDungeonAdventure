@@ -34,28 +34,15 @@
             e1.iNoticeRange = 200
             e1.Register()
 
-            'e1.SetTexAnim()
 
             map.Register()
             map.MapLoad(d_maps & "TestMap.map")
 
-            'For i As Single = 0.5 To 6.28 Step 6.28 / 60
-            '    ce = New cEnemy
-            '    ce.iRadius = 7
-            '    ce.HP = 20
-            '    ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
-            '    ce.SetPos(42 * 32 + Math.Cos(i) * 120, 23 * 32 + Math.Sin(i) * 120)
-            '    ce.Register()
-            'Next
-
-            'Me.Show()
 
             bFrmMainLoaded = True
             bStop = False
 
             If My.Resources.bJumpOP = False Then p_TitleScreen()
-
-            'Algorithm_SpeedTest_RectContainsP()
 
             p_MainGame()
         End If
@@ -85,6 +72,7 @@
         Do
             My.Application.DoEvents()
 #End Region
+
 #Region "绘制+计算"
             '————————绘制部分————————
             mGraph.ClearDevice(Color.Purple)
@@ -114,17 +102,16 @@
             If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.B, False) Then
                 mISrenderer.InitISrenderer_test()
                 mISrenderer.DrawBagSlots()
-                'mGraph.Drawline(0, 0, 10, 10, Color.White)
             End If
 
-            DrawText(mGraph.fFPS, 10, ResH - 22, Color.White)
-            DrawText(fi, 10, ResH - 42, Color.White)
-            DrawText(Col_Enemy.Count, 10, ResH - 62, Color.White)
-            'DrawText(Col_charaDmk.Count, 10, ResH - 34, Color.White)
+            DrawText("FPS: " & mGraph.fFPS, 10, ResH - 22, Color.White)
+            DrawText("TotalFrames: " & fi.ToString(), 10, ResH - 42, Color.White)
+            DrawText("Col_Enemy.Count: " & Col_Enemy.Count, 10, ResH - 62, Color.White)
 
             mGraph.EndDevice(False)
             '————————绘制部分结束————————
 #End Region
+
 #Region "按键检测"
             '按键检测
             If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.F5) Then
@@ -165,6 +152,7 @@
 
             RefreshKeyDX()
 #End Region
+
 #Region "帧控制"
             '帧控制
             If False Then
@@ -180,6 +168,7 @@
             End If
             fi += 1
 #End Region
+
 #Region "呈递"
             '呈递
             device.Present()

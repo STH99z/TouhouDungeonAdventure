@@ -122,7 +122,7 @@
     <comment>是否跳过片头</comment>
   </data>
   <data name="iSEVolume" xml:space="preserve">
-    <value>80</value>
+    <value>100</value>
     <comment>SE音量</comment>
   </data>
   <data name="windowScaleH" xml:space="preserve">

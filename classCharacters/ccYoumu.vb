@@ -13,8 +13,8 @@
         mTex = New cTex
         mTex.LoadGraph(d_image & "character\chara_09.png", 3, 5)
         mTexEff.LoadGraph(d_image & "particle\eff16x2.png", 16, 2)
-        sklsound.LoadA("se\se_slash.wav")
-        sklsound.SetvolumeA(My.Resources.iSEVolume)
+        sklsound.LoadFromPath("se\se_slash.wav")
+        sklsound.Volume = My.Resources.iSEVolume
         Init(11, 4)
         iMoveSpeed = 2.6
         iMoveSpeedBase = 2.6
@@ -37,12 +37,12 @@
     Protected Friend Overrides Sub Skill_1()
         If iDirection = 5 Then Exit Sub
         If mInput.IsKeyDownDX(Key_skill1, True) Then
-            sklsound.ssound.CurrentPosition = 0
+            sklsound.CurPos = 0
             Skl1frame = 10
             Skl1faceto = fDirection2Angle(iFaceTo)
             bIgnoreCollision_entity = True
             iMoveSpeed = iMoveSpeedBase * 5
-            sklsound.PlayA()
+            sklsound.Play()
         End If
     End Sub
 

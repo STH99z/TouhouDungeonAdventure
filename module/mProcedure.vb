@@ -180,13 +180,13 @@
         chara(1).mTex = tex_marisa
         chara(0).InitR(440, 0, 15, 3.14, -0.25, 0)
         chara(1).InitR(-250, 0, 15, 0, -0.25, 0)
-        bgm.LoadA("bgm\sc0.mp3")
-        bgm.SetvolumeA(100)
+        bgm.LoadFromPath("bgm\sc0.mp3")
+        bgm.Volume = 100
         Cam.Reset()
         'Do Until mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.S, True)
         '    My.Application.DoEvents()
         'Loop
-        bgm.PlayA()
+        bgm.Play()
         'bgm.ssound.CurrentPosition = 10.6
 
 
@@ -289,7 +289,7 @@
             RefreshKeyDX()
         Loop Until bStop
 
-        bgm.StopA()
+        bgm.Stop()
         bgm.Dispose()
         ptccol.Clear()
         tex_walk.Dispose()

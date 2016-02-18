@@ -6,14 +6,14 @@
             "Item01",
             "Item02"
         }
-    Public Shared iItemMaxStack() As Int32 = _
-        {
-            1,
-            999999999,
-            99,
-            99
-        }
-    Protected Friend sName As String
+	Public Shared iItemMaxStack() As Int32 =
+		{
+			1,
+			Integer.MaxValue,
+			99,
+			99
+		}
+	Protected Friend sName As String
     Protected Friend iID As Int32
 
     Public Sub New()

@@ -119,11 +119,17 @@
         End If
     End Sub
 
-    Protected Friend Overridable Sub Skill_1()
-        If mInput.IsKeyDownDX(Key_skill1, False) Then
+	Protected Friend Overridable Sub Skill_1()
+		If mInput.IsKeyDownDX(Key_skill1, False) Then
 
-        End If
-    End Sub
+		End If
+	End Sub
+
+	Protected Friend Overridable Sub Skill_2()
+		If mInput.IsKeyDownDX(Key_skill2, False) Then
+
+		End If
+	End Sub
 
 	Protected Friend Overrides Sub Dispose()
 		MyBase.Dispose()

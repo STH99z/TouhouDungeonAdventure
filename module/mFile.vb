@@ -128,8 +128,9 @@
             For i = 1 To 48
                 Dim s As String
                 s = sr.ReadLine()
-                SE(i) = New cSound(d_se & s)
-                SEnames.Add(s, SE(i))
+				SE(i) = New cSound(d_se & s)
+				SE(i).Volume = My.Resources.iSEVolume
+				SEnames.Add(s, SE(i))
             Next
         Catch ex As Exception
             MsgBox(ex.Message)

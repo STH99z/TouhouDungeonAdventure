@@ -2,11 +2,11 @@
 
     Public bFrmMainLoaded As Boolean = False
     Public Shared c2 As New cTex, ctex_tama As New cTex
-    Public Shared p1 As New ccCirno
-    Public Shared e1 As New cEnemy
-    Public Shared map As New cMap
+	Public Shared p1 As cPlayer
+	Public Shared e1 As cEnemy
+	Public Shared map As New cMap()
 
-    Public Shared Col_charaDmkA As New Collection
+	Public Shared Col_charaDmkA As New Collection
     Public Shared Col_enemyDmkA As New Collection
 
     Private Sub FrmMain_Activated(sender As Object, e As EventArgs) Handles Me.Activated
@@ -24,11 +24,14 @@
             Col_enemyDmk = Col_enemyDmkA
 
             c2.LoadGraph(d_image & "character\chara_09.png", 3, 5)
-            ctex_tama.LoadGraph(d_image & "character\nekotama.png", 4, 4)
-            p1.InitAll()
-            p1.SetPos(42 * 32, 21 * 32)
-            p1.Register()
-            e1.iRadius = 5
+			ctex_tama.LoadGraph(d_image & "character\nekotama.png", 4, 4)
+
+			p1 = New ccCirno()
+			p1.SetPos(42 * 32, 21 * 32)
+			p1.Register()
+
+			e1 = New cEnemy()
+			e1.iRadius = 5
             e1.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
             e1.SetPos(46 * 32, 21 * 32)
             e1.iNoticeRange = 200
@@ -140,8 +143,9 @@
 			p1.ProcessDmk()
             p1.ProcessArea()
             p1.Shoot()
-            p1.Skill_1()
-            p1.Update()
+			p1.Skill_1()
+			p1.Skill_2()
+			p1.Update()
             cEnemy.CollideBuffer_Clear()
             cEnemy.CollideBuffer_Calc()
             cEnemy.EnemyCollection_Update()

@@ -7,33 +7,47 @@ Public Class cSound
         alreadyset = 1
     End Enum
 
-    Protected ssound As Audio = Nothing
-    Public StopPosition As Double
+	Protected ssound As Audio = Nothing
+	Private mVolume As Single = 100, mBalance As Single
+	Public StopPosition As Double
     Public LoopMode As eLoopMode
-    Public LoopStart As Double, LoopEnd As Double
-    ''' <summary>
-    ''' 通过ID获取已载入的SE
-    ''' </summary>
-    ''' <param name="ID">SE编号</param>
-    ''' <returns></returns>
-    Public Shared Function GetSE(ID As Int16) As cSound
-        Return SE(ID).MemberwiseClone()
-    End Function
+	Public LoopStart As Double, LoopEnd As Double
+#Region "静态方法"
+	''' <summary>
+	''' 通过ID获取已载入的SE
+	''' </summary>
+	''' <param name="ID">SE编号</param>
+	''' <returns></returns>
+	Public Shared Function GetSE(ID As Int16) As cSound
+		Return SE(ID).MemberwiseClone()
+	End Function
     ''' <summary>
     ''' 通过名字获取已载入的SE
     ''' </summary>
     ''' <param name="Name">音频名字，不加se_和.wav</param>
     ''' <returns></returns>
     Public Shared Function GetSE(Name As String) As cSound
-        Dim c As cSound
-        c = SEnames.Item("se_" & Name & ".wav")
-        Return c.MemberwiseClone()
-    End Function
-    ''' <summary>
-    ''' 获取、设置音频当前位置
-    ''' </summary>
-    ''' <returns></returns>
-    Public Property CurPos As Double
+		Dim c As cSound
+		c = SEnames.Item("se_" & Name & ".wav")
+		Return c.MemberwiseClone()
+	End Function
+	''' <summary>
+	''' 设置所有SE的音量
+	''' </summary>
+	''' <param name="vol"></param>
+	Public Shared Sub SetSEVolume(vol As Int32)
+		Dim i As Int32
+		For i = 1 To 48
+			SE(i).Volume = vol
+		Next
+	End Sub
+#End Region
+
+	''' <summary>
+	''' 获取、设置音频当前位置
+	''' </summary>
+	''' <returns></returns>
+	Public Property CurPos As Double
         Get
             Return ssound.CurrentPosition
         End Get
@@ -43,23 +57,36 @@ Public Class cSound
 
     End Property
     ''' <summary>
-    ''' 获取、设定音量（待换算）
+    ''' 获取、设定音量，转换对应范围-10000~0 --> 0~100，线性对应，范围0~100
     ''' </summary>
-    ''' <returns></returns>
-    Public Property Volume As Int32
-        Get
-            Return ssound.Volume
-        End Get
-        Set(value As Int32)
-            ssound.Volume = value
-        End Set
-    End Property
+    ''' <returns>0~100的音量</returns>
+    Public Property Volume As Single
+		Get
+			Return mVolume
+		End Get
+		Set(value As Single)
+			mVolume = value
+			ssound.Volume = (value - 100) * 100
+		End Set
+	End Property
+	''' <summary>
+	''' 获取、设置平衡
+	''' </summary>
+	''' <returns></returns>
+	Public Property Balance As Single
+		Get
+			Return ssound.Balance
+		End Get
+		Set(value As Single)
+			ssound.Balance = value
+		End Set
+	End Property
 
-    ''' <summary>
-    ''' 载入音频文件
-    ''' </summary>
-    ''' <param name="fn">音频文件地址，相对地址</param>
-    Public Sub LoadFromPath(fn As String)
+	''' <summary>
+	''' 载入音频文件
+	''' </summary>
+	''' <param name="fn">音频文件地址，相对地址</param>
+	Public Sub LoadFromPath(fn As String)
         ssound = New Audio(Application.StartupPath & "\" & fn, False)
         StopPosition = ssound.StopPosition / 10000000
     End Sub
@@ -105,14 +132,16 @@ Public Class cSound
     ''' 播放
     ''' </summary>
     Public Sub Play()
-        ssound.Play()
-    End Sub
+		ForceSetVolume()
+		ssound.Play()
+	End Sub
     ''' <summary>
     ''' 强制重新播放
     ''' </summary>
     Public Sub ForcePlay()
-        CurPos = 0
-        ssound.Play()
+		CurPos = 0
+		ForceSetVolume()
+		ssound.Play()
     End Sub
     ''' <summary>
     ''' 就是停止播放，调用的时候就调用ClassInstance.Stop()就好
@@ -133,8 +162,8 @@ Public Class cSound
         Select Case LoopMode
             Case eLoopMode.normal
                 If IsStopped() Then
-                    Me.Stop()
-                    Play()
+					[Stop]()
+					Play()
                 End If
             Case eLoopMode.alreadyset
                 If CurPos >= LoopEnd Then
@@ -154,7 +183,11 @@ Public Class cSound
     ''' ，停止播放，释放资源
     ''' </summary>
     Public Sub Dispose()
-        ssound.Stop()
-        ssound.Dispose()
-    End Sub
+		ssound.Stop()
+		ssound.Dispose()
+	End Sub
+
+	Private Sub ForceSetVolume()
+		Volume = Volume
+	End Sub
 End Class

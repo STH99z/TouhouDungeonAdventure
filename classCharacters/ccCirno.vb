@@ -51,7 +51,7 @@
 	End Sub
 
     Protected Friend Overrides Sub Skill_1()
-        If mInput.IsKeyDownDX(Key_skill1, True) Then
+		If mInput.IsKeyDownDX(Key_skill1, True) Then
             '如果还在放skl1那么就不设定frame和方向
             If Skl1frame > 0 Then
 				Exit Sub
@@ -64,7 +64,7 @@
 				sklsound.ForcePlay()
 			End If
 		End If
-    End Sub
+	End Sub
 
     Protected Friend Overrides Sub Update()
         MyBase.Update()

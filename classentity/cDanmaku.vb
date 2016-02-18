@@ -76,7 +76,7 @@
             If bTargetCharacter Then
                 For Each e As cCreature In Col_Chara
                     If Me.IsCollideWith(e) Then
-                        e.Damaged(iDamage)
+                        e.OnHit(iDamage)
                         CreateDmgText(e.xPos - 10, e.yPos - 20, iDamage)
                         Me.iLifeTime = 0
                         Exit For
@@ -85,7 +85,7 @@
             ElseIf bTargetEnemy Then
                 For Each e As cCreature In Col_Enemy
                     If Me.IsCollideWith(e) Then
-                        e.Damaged(iDamage)
+                        e.OnHit(iDamage)
                         CreateDmgText(e.xPos - 10, e.yPos - 20, iDamage)
                         Me.iLifeTime = 0
                         Exit For

@@ -125,14 +125,19 @@
 
         End Select
     End Sub
-    Protected Friend Overridable Sub Death()
+	Protected Friend Overridable Sub OnDeath()
 
-    End Sub
+	End Sub
 
-    Protected Friend Overridable Sub Damaged(ByVal dmgvalue As Int16)
-        HP -= dmgvalue
-        iUnderAttack = 11
-    End Sub
+	Protected Friend Overridable Sub Dispose()
+		Me.mAnim = Nothing
+		Me.mTex = Nothing
+	End Sub
+
+	Protected Friend Overridable Sub OnHit(ByVal dmgvalue As Int16)
+		HP -= dmgvalue
+		iUnderAttack = 11
+	End Sub
 
 	Protected Friend Overridable Sub Update()
 		If iUnderAttack > 0 Then

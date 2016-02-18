@@ -5,6 +5,8 @@
 	Private HPpointer As Single
 	Private MPpointer As Single
 
+	Protected Friend iInvincibleTime As Int16
+
 	Protected Friend iStatus As Int16 = 0
     Protected Friend iLastDirection As Byte = 0
     Protected Friend iFaceTo As Byte = 2
@@ -123,8 +125,11 @@
         End If
     End Sub
 
-	Protected Friend Sub Dispose()
-
+	Protected Friend Overrides Sub Dispose()
+		MyBase.Dispose()
+		Me.col_area.Clear()
+		Me.col_dmk.Clear()
+		Col_Chara.Remove(Me.sKey)
 	End Sub
 
 	Protected Friend Overrides Sub Update()

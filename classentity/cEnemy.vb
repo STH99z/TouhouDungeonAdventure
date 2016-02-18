@@ -218,23 +218,22 @@
         Col_Enemy.Add(Me, Me.sKey)
     End Sub
 
-    Protected Friend Sub Dispose()
-        Me.col_area.Clear()
-        Me.col_dmk.Clear()
-        Me.mAnim = Nothing
-        Me.mTex = Nothing
-    End Sub
+	Protected Friend Overrides Sub Dispose()
+		MyBase.Dispose()
+		Me.col_area.Clear()
+		Me.col_dmk.Clear()
+	End Sub
 
-    Protected Friend Overrides Sub Death()
-        MyBase.Death()
-        Col_Enemy.Remove(Me.sKey)
-        Me.Dispose()
-    End Sub
+	Protected Friend Overrides Sub OnDeath()
+		MyBase.OnDeath()
+		Col_Enemy.Remove(Me.sKey)
+		Me.Dispose()
+	End Sub
 
-    Protected Friend Sub Process()
-        If HP <= 0 Then
-            Me.Death()
-            iEnemyArrayCount -= 1
+	Protected Friend Sub Process()
+		If HP <= 0 Then
+			Me.OnDeath()
+			iEnemyArrayCount -= 1
             iEnemyArrayProc -= 1
         Else
             Me.Move()

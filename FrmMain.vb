@@ -36,10 +36,10 @@
 
 
             map.Register()
-            map.MapLoad(d_maps & "TestMap.map")
+			map.MapLoad(d_maps & "Shrine01.map")
 
 
-            bFrmMainLoaded = True
+			bFrmMainLoaded = True
             bStop = False
 
             If My.Resources.bJumpOP = False Then p_TitleScreen()

@@ -1,4 +1,4 @@
-mTexPath,image\tilesets\forest.png
+mTexPath,RES\image\tilesets\forest.png
 mTexSplitX,24
 mTexSplitY,32
 iTileCount,768

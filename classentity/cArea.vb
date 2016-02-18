@@ -111,7 +111,7 @@
             Case JudgeMethod.rect
                 For Each ce As cEnemy In Col_Enemy
                     If Rect.Contains(ce.xPos, ce.yPos) Then
-                        ce.Damaged(iDamage)
+                        ce.OnHit(iDamage)
                         CreateDmgText(ce.xPos - 10, ce.yPos - 20, iDamage)
                     End If
                 Next
@@ -122,7 +122,7 @@
             Case JudgeMethod.square
                 For Each ce As cEnemy In Col_Enemy
                     If Rect.Contains(ce.xPos, ce.yPos) Then
-                        ce.Damaged(iDamage)
+                        ce.OnHit(iDamage)
                         CreateDmgText(ce.xPos - 10, ce.yPos - 20, iDamage)
                     End If
                 Next

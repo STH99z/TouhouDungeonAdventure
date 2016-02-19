@@ -8,8 +8,8 @@ Imports System.Runtime.InteropServices
 
 ' 查看程序集特性的值
 
-<Assembly: AssemblyTitle("TouhouDungeonAdventure")> 
-<Assembly: AssemblyDescription("")> 
+<Assembly: AssemblyTitle("TouhouDungeonAdventure")>
+<Assembly: AssemblyDescription("Explore the Gensoukyo!")>
 <Assembly: AssemblyCompany("STH Studio")> 
 <Assembly: AssemblyProduct("TouhouDungeonAdventure")> 
 <Assembly: AssemblyCopyright("Copyright © STH Studio 2015")> 

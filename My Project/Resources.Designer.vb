@@ -70,7 +70,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  查找类似 85 的本地化字符串。
+        '''  查找类似 90 的本地化字符串。
         '''</summary>
         Friend ReadOnly Property iSEVolume() As String
             Get

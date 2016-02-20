@@ -29,6 +29,7 @@
 	Public iEnemyArrayProc As Integer, iEnemyArrayCount As Integer
 	Public vEnemyCollideBuffer() As PointF
 	Public iEnemyCollideBufferProc As Integer
+	Public htTileContains(,) As Hashtable
 
 	Public mISrenderer As New cISrenderer
 

@@ -258,14 +258,22 @@
         Loop
 
         mFile.FileClose_Read()
-        For il = 0 To iLayerCount - 1
-            For iy = 1 To mapHeight
-                For ix = 0 To mapWidth - 1
-                    mLayer(il).iTileI(ix + 1, iy).CheckD8S(il, ix + 1, iy)
-                Next
-            Next
-        Next
-    End Sub
+		For il = 0 To iLayerCount - 1
+			For iy = 1 To mapHeight
+				For ix = 0 To mapWidth - 1
+					mLayer(il).iTileI(ix + 1, iy).CheckD8S(il, ix + 1, iy)
+				Next
+			Next
+		Next
+
+		'初始化TileContains
+		ReDim htTileContains(mapWidth, mapHeight)
+		For ix = 1 To mapWidth
+			For iy = 1 To mapHeight
+				htTileContains(ix, iy) = New Hashtable()
+			Next
+		Next
+	End Sub
 
     Public Sub TileSave(ByVal filename As String)
         mFile.FileOpen_Write(filename)

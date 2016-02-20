@@ -22,17 +22,18 @@ Partial Class FrmStart
     '不要使用代码编辑器修改它。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.SuspendLayout()
-        '
-        'FrmStart
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(284, 262)
-        Me.Name = "FrmStart"
-        Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "FrmStart"
-        Me.ResumeLayout(False)
+		Me.SuspendLayout()
+		'
+		'FrmStart
+		'
+		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
+		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+		Me.ClientSize = New System.Drawing.Size(284, 262)
+		Me.Name = "FrmStart"
+		Me.Opacity = 0R
+		Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
+		Me.Text = "FrmStart"
+		Me.ResumeLayout(False)
 
-    End Sub
+	End Sub
 End Class

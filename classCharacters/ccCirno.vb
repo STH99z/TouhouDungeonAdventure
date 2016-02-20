@@ -1,9 +1,7 @@
 ﻿Public Class ccCirno
     Inherits cPlayer
 
-    'Protected Friend Shared mTexEff As New cTex
-    Protected Friend iDashTimeLast As Int16 = 0
-    Private Const iDashTime = 50
+	'Protected Friend Shared mTexEff As New cTex
 	Private sklsound1 As cSound
 	Private sklsound2 As cSound
 	Private shootsound As cSound
@@ -14,8 +12,8 @@
 		MyBase.New()
 		SetMAXhp(100)
 		SetMAXmp(100)
-		MPregen = 0.025
 		HPregen = 0.025
+		MPregen = 0.025
 		sCharaName = "Cirno"
 		mTex = New cTex()
 		mTex.LoadGraph(d_image & "character\chara_07.png", 3, 5)
@@ -55,8 +53,9 @@
 				Exit Sub
 			End If
 			'检测MP量
-			If MP >= 10 Then
-				MP -= 10
+			Const MPcost As Int16 = 15
+			If MP >= MPcost Then
+				MP -= MPcost
 				Skl1frame = 100
 				Skl1faceto = fDirection2Angle(iFaceTo)
 				sklsound1.ForcePlay()

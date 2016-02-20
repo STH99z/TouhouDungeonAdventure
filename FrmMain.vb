@@ -10,47 +10,8 @@
     Public Shared Col_enemyDmkA As New Collection
 
     Private Sub FrmMain_Activated(sender As Object, e As EventArgs) Handles Me.Activated
-        If Not bFrmMainLoaded Then
-            Me.Focus()
-            Me.SetClientSizeCore(ResW * My.Resources.windowScaleW, ResH * My.Resources.windowScaleH)
-            Me.SetClientSizeCore(ResW * 2, ResH * 2)
-            Me.Left = Screen.PrimaryScreen.Bounds.Width / 2 - Me.Width / 2
-            Me.Top = Screen.PrimaryScreen.Bounds.Height / 2 - Me.Height / 2
-            mGraph.InitDXBasic(Me, ResW, ResH)
-            mInput.InitDXinput()
-            mFile.LoadGameData()
-
-            Col_charaDmk = Col_charaDmkA
-            Col_enemyDmk = Col_enemyDmkA
-
-            c2.LoadGraph(d_image & "character\chara_09.png", 3, 5)
-			ctex_tama.LoadGraph(d_image & "character\nekotama.png", 4, 4)
-
-			p1 = New ccCirno()
-			p1.SetPos(42 * 32, 21 * 32)
-			p1.Register()
-
-			e1 = New cEnemy()
-			e1.iRadius = 5
-            e1.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
-            e1.SetPos(46 * 32, 21 * 32)
-            e1.iNoticeRange = 200
-            e1.Register()
-
-
-            map.Register()
-			map.MapLoad(d_maps & "Shrine01.map")
-
-
-			bFrmMainLoaded = True
-            bStop = False
-
-            If My.Resources.bJumpOP = False Then p_TitleScreen()
-
-            p_MainGame()
-        End If
-
-    End Sub
+		p_Active()
+	End Sub
 
     Private Sub FrmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
         FrmStart.ExitApplication()
@@ -65,11 +26,70 @@
         'p1.SetPos(e.X, e.Y)
     End Sub
 
-    Private Sub FrmMain_MouseMove(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
-        mInput.GetXYfromWindow(e.X, e.Y)
-    End Sub
+	Private Sub FrmMain_MouseMove(sender As Object, e As MouseEventArgs) Handles Me.MouseMove
+		mInput.GetXYfromWindow(e.X, e.Y)
+	End Sub
 
-    Public Sub p_MainGame()
+	'窗体激活时执行代码
+	Public Sub p_Active()
+		If Not bFrmMainLoaded Then
+
+			bFrmMainLoaded = True
+			bStop = False
+
+			Me.Focus()
+			Me.SetClientSizeCore(ResW * My.Resources.windowScaleW, ResH * My.Resources.windowScaleH)
+			Me.SetClientSizeCore(ResW * 2, ResH * 2)
+			Me.Left = Screen.PrimaryScreen.Bounds.Width / 2 - Me.Width / 2
+			Me.Top = Screen.PrimaryScreen.Bounds.Height / 2 - Me.Height / 2
+			mGraph.InitDXBasic(Me, ResW, ResH)
+
+			mGraph.BeginDevice()
+			DrawText("试玩Loading...", 180, 150, Color.White)
+			mGraph.EndDevice()
+
+			mInput.InitDXinput()
+			mFile.LoadGameData()
+
+			'OP动画
+			If My.Resources.bJumpOP = False Then p_TitleScreen()
+
+			Col_charaDmk = Col_charaDmkA
+			Col_enemyDmk = Col_enemyDmkA
+
+			c2.LoadGraph(d_image & "character\chara_09.png", 3, 5)
+			ctex_tama.LoadGraph(d_image & "character\nekotama.png", 4, 4)
+
+			mGraph.BeginDevice()
+			DrawText("选择自机:", 100, 180, Color.White)
+			DrawText("1.琪露诺", 150, 195, Color.FromArgb(255, 37, 97, 150))
+			DrawText("2.妖梦", 210, 195, Color.FromArgb(255, 49, 79, 47))
+			mGraph.EndDevice()
+
+			Dim charasel As Byte = 0
+			While (p1 Is Nothing)
+				Application.DoEvents()
+				If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.D1, True) Then
+					p1 = New ccCirno()
+				End If
+				If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.D2, True) Then
+					p1 = New ccYoumu()
+				End If
+			End While
+
+			'p1 = New ccCirno()
+			p1.SetPos(42 * 32, 21 * 32)
+			p1.Register()
+
+			map.Register()
+			map.MapLoad(d_maps & "testmap.map")
+
+			p_MainGame()
+		End If
+
+	End Sub
+
+	Public Sub p_MainGame()
 #Region "初始化+循环开始"
         Dim fi As Integer = 0
         Do
@@ -85,16 +105,15 @@
 
             BeginGraph_Forced()
 
-            DrawEnemy()
-            p1.DrawC()
+			cEnemy.DrawEnemy()
+			p1.DrawC()
             p1.DrawArea()
 			p1.DrawDmk()
-			'DrawRect(0, 0, 10, 10, Color.FromArgb(0, 0, 0, 0))
+			'DrawRect(0, 0, 10, 10, Color.FromArgb(255, 0, 0, 0))
 
 			EndGraph_Forced()
 
-            map.DrawMap_UpperLayer(p1)
-			'cEnemy.CollideBuffer_Visualize()
+			map.DrawMap_UpperLayer(p1)
 
 			DrawTextPoped()
 
@@ -108,19 +127,21 @@
 				mISrenderer.DrawBagSlots()
 			End If
 
+			'cEnemy.CollideBuffer_Visualize()
+
 			p1.DrawHPbar(400 - 90, 300 - 40, 80, 10)
 			p1.DrawMPbar(400 - 90, 300 - 20, 80, 10)
 
 			DrawText("FPS: " & mGraph.fFPS, 10, ResH - 22, Color.White)
             DrawText("TotalFrames: " & fi.ToString(), 10, ResH - 42, Color.White)
-            DrawText("Col_Enemy.Count: " & Col_Enemy.Count, 10, ResH - 62, Color.White)
+			DrawText("Col_Enemy.Count: " & Col_Enemy.Count, 10, ResH - 62, Color.White)
 
-            mGraph.EndDevice(False)
+			mGraph.EndDevice(False)
 			'————————绘制部分结束————————
 #End Region
 
 #Region "按键检测"
-			'按键检测
+			'添加新怪
 			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.F5) Then
 				Dim ce As cEnemy
 				For i As Single = 0.5 To 6.28 Step 6.28 / 60
@@ -132,6 +153,7 @@
 					ce.Register()
 				Next
 			End If
+			'退出游戏
 			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Escape) Then
 				bStop = True
 				UnloadDXengine()
@@ -146,14 +168,11 @@
 			p1.Skill_1()
 			p1.Skill_2()
 			p1.Update()
-            cEnemy.CollideBuffer_Clear()
-            cEnemy.CollideBuffer_Calc()
-            cEnemy.EnemyCollection_Update()
+			cEnemy.EnemyCollection_Update()
 
-            Cam.FocusOn(p1)
+			Cam.FocusOn(p1)
 
             RefreshKeyDX()
-
 
 #Region "帧控制"
 			'帧控制

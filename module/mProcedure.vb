@@ -72,20 +72,10 @@
     ''' </summary>
     ''' <remarks></remarks>
     Public Sub DrawTextPoped()
-        For Each tp As cTextPop In Col_TextPop
-            tp.Pop()
-        Next
-    End Sub
-    ''' <summary>
-    ''' 绘制全部敌人
-    ''' </summary>
-    ''' <remarks></remarks>
-    Public Sub DrawEnemy()
-        For Each ce As cEnemy In Col_Enemy
-            ce.DrawC()
-        Next
-
-    End Sub
+		For Each tp As cTextPop In Col_TextPop
+			tp.Pop()
+		Next
+	End Sub
     ''' <summary>
     ''' 算法测试：矩形检测包含点
     ''' </summary>
@@ -180,8 +170,8 @@
         chara(1).mTex = tex_marisa
         chara(0).InitR(440, 0, 15, 3.14, -0.25, 0)
         chara(1).InitR(-250, 0, 15, 0, -0.25, 0)
-        bgm.LoadFromPath("bgm\sc0.mp3")
-        bgm.Volume = 100
+		bgm.LoadFromPath(d_bgm & "sc0.mp3")
+		bgm.Volume = 100
         Cam.Reset()
         'Do Until mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.S, True)
         '    My.Application.DoEvents()

@@ -8,9 +8,10 @@
     Public Const f_icwi = "image_chara_walkindex.txt"
     Public Const f_wfs = "image_chara_walkframespeed.txt"
 
-    Public Const d_se = "RES\se\"
+	Public Const d_se = "RES\se\"
+	Public Const d_bgm = "RES\bgm\"
 
-    Public ReadOnly AppPath As String = Application.StartupPath & "\"
+	Public ReadOnly AppPath As String = Application.StartupPath & "\"
     Public Line As String = ""
     Public args As String()
     Public argsInput As String()

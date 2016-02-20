@@ -2,8 +2,8 @@
 	Inherits cCreature
 	Protected Friend MPregen As Single = 0
 	Protected Friend HPregen As Single = 0
-	Private HPpointer As Single
-	Private MPpointer As Single
+	Protected Friend HPpointer As Single
+	Protected Friend MPpointer As Single
 
 	Protected Friend iInvincibleTime As Int16
 
@@ -45,6 +45,10 @@
 		If HP > HPmax Then HP = HPmax
 		MP += MPregen
 		If MP > MPmax Then MP = MPmax
+		'处理MPregen为负的情况
+		If MPregen < 0 Then
+			If MP < 0 Then MP = 0
+		End If
 	End Sub
 
 	Enum CharacterClass
@@ -251,7 +255,7 @@
 		Next
 	End Sub
 
-	Protected Friend Sub DrawHPbar(x As Int16, y As Int16, width As Int16, height As Int16)
+	Protected Friend Overridable Sub DrawHPbar(x As Int16, y As Int16, width As Int16, height As Int16)
 		HPpointer += (HP - HPpointer) / 30
 		Dim pos As Single = x + width * HP / HPmax
 		Dim pos2 As Single = x + width * HPpointer / HPmax
@@ -261,7 +265,7 @@
 		End If
 	End Sub
 
-	Protected Friend Sub DrawMPbar(x As Int16, y As Int16, width As Int16, height As Int16)
+	Protected Friend Overridable Sub DrawMPbar(x As Int16, y As Int16, width As Int16, height As Int16)
 		MPpointer += (MP - MPpointer) / 30
 		Dim pos As Single = x + width * MP / MPmax
 		Dim pos2 As Single = x + width * MPpointer / MPmax

@@ -244,7 +244,7 @@ Module mGraph
         'device.SetRenderState(RenderStates.ZBufferWriteEnable, True)
         'device.SetRenderState(RenderStates.ZBufferFunction, 4)
         device.SetRenderState(RenderStates.CullMode, Cull.None)
-        device.SetRenderState(RenderStates.Lighting, False)
+		device.SetRenderState(RenderStates.Lighting, False)
         device.SetRenderState(RenderStates.AlphaBlendEnable, True)
         device.SetRenderState(RenderStates.SourceBlend, Blend.SourceAlpha)
         device.SetRenderState(RenderStates.DestinationBlend, Blend.InvSourceAlpha)
@@ -255,11 +255,11 @@ Module mGraph
 
     '结束
     Public Sub EndDevice(Optional presentnow As Boolean = True)
-        device.EndScene()
-        If presentnow Then device.Present()
-        LTimeNow = timeGetTime()
-        fFPSbuffer = LTimeNow - lTimeLast
-        If fFPSbuffer = 0 Then fFPSbuffer = 1 '避免计算过快导致fFPS溢出
+		device.EndScene()
+		If presentnow Then device.Present()
+		LTimeNow = timeGetTime()
+		fFPSbuffer = LTimeNow - lTimeLast
+		If fFPSbuffer = 0 Then fFPSbuffer = 1 '避免计算过快导致fFPS溢出
         fFPS = Int(1000 / fFPSbuffer) '计算FPS
         'If continueRendering Then
         '    If FrmMain.WindowState <> FormWindowState.Minimized Then

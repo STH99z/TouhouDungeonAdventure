@@ -1,9 +1,19 @@
 ﻿Public Class cEnemy
-    Inherits cCreature
+	Inherits cCreature
 
-    Delegate Function DlgProc()
+	''' <summary>
+	''' 轮番检测时只按这样检测，假设共10个
+	''' 1st:1,4,7,10
+	''' 2nd:2,5,8
+	''' 3rd:3,6,9
+	''' </summary>
+	Protected Friend Shared iCheckNoticeOffset As Int16 = 0
+	''' <summary>
+	''' 分iCheckNoticeLoop份检测
+	''' </summary>
+	Protected Friend Shared iCheckNoticeLoop As Int16 = 3
 
-    Protected Friend sKey As String
+	Protected Friend sKey As String
 
     Protected Friend col_dmk As New Collection
     Protected Friend col_area As New Collection
@@ -50,16 +60,19 @@
     End Sub
 
     Protected Friend Sub CheckNotice()
-        Dim dist As Single = iNoticeRange + 1
+        'Dim dist As Single = iNoticeRange + 1
         Dim disttemp As Single
         For Each e As cPlayer In Col_Chara
             disttemp = e.GetDistance(Me)
-            If disttemp <= iNoticeRange Then
-                If disttemp < dist Then
-                    dist = disttemp
-                    Active(e)
-                End If
-            End If
+			If disttemp <= iNoticeRange Then
+				'If disttemp < dist Then
+				'    dist = disttemp
+				'    Active(e)
+				'End If
+				Active(e)
+			ElseIf disttemp >= iNoticeRange * 1.3 Then
+				Deactive()
+			End If
         Next
     End Sub
 	''' <summary>
@@ -273,19 +286,30 @@
 			ce.Process() '敌人消除&移动
 		Next
 
-		'敌人洞察玩家
+		'敌人洞察玩家-旧版
 		'妈的这里我要干嘛来着？
-		If Col_Enemy.Count = 0 Then Exit Sub
-        Dim e As cEnemy
-        For i As Int16 = 0 To 4
-            If (iCheckNoticeProc + i) > Col_Enemy.Count Then
-                iCheckNoticeProc = 1 - i
-            End If
-            e = Col_Enemy.Item(iCheckNoticeProc + i)
+		''If Col_Enemy.Count = 0 Then Exit Sub
+		''      Dim e As cEnemy
+		''      For i As Int16 = 0 To 4
+		''          If (iCheckNoticeProc + i) > Col_Enemy.Count Then
+		''              iCheckNoticeProc = 1 - i
+		''          End If
+		''          e = Col_Enemy.Item(iCheckNoticeProc + i)
+		''	e.CheckNotice()
+		''Next
+		''      iCheckNoticeProc += 5
+
+		'敌人洞察玩家
+		Dim e As cEnemy
+		For i As Int32 = 1 + iCheckNoticeOffset To Col_Enemy.Count Step iCheckNoticeLoop
+			e = Col_Enemy.Item(i)
 			e.CheckNotice()
 		Next
-        iCheckNoticeProc += 5
-    End Sub
+		iCheckNoticeOffset += 1
+		If iCheckNoticeOffset = iCheckNoticeLoop Then
+			iCheckNoticeOffset = 0
+		End If
+	End Sub
 
     Protected Friend Sub SetShootInterval(ByVal interval As Int16)
         iShootInterval = interval
@@ -314,9 +338,16 @@
 
 	Protected Friend Overrides Sub OnDeath()
 		MyBase.OnDeath()
+		FrmMain.killCount += 1
 		If FrmMain.p1.sCharaName = "Youmu" Then
-			FrmMain.p1.MP += 3
+			With FrmMain.p1
+				.MP += 2.5
+				If .MP > .MPmax Then
+					.MP = MPmax
+				End If
+			End With
 		End If
+		htTileContains(pAtTilePos.X, pAtTilePos.Y).Remove(sKey)
 		Col_Enemy.Remove(Me.sKey)
 		Me.Dispose()
 	End Sub
@@ -325,11 +356,18 @@
 		If HP <= 0 Then
 			Me.OnDeath()
 			iEnemyArrayCount -= 1
-            iEnemyArrayProc -= 1
-        Else
-            Me.Move()
-        End If
-    End Sub
+			iEnemyArrayProc -= 1
+		Else
+			Me.Move()
+		End If
+		'检测碰撞 扣Chara血
+		If IsCollideWith_rect(FrmMain.p1) Then
+			With FrmMain.p1
+				'.HP -= 4
+			End With
+			Me.OnDeath()
+		End If
+	End Sub
 
 	Protected Friend Overrides Sub Move()
 		'更新碰撞HashTable

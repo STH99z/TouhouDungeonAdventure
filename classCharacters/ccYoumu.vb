@@ -42,15 +42,23 @@
 
     Protected Friend Overrides Sub Skill_1()
         If iDirection = 5 Then Exit Sub
-        If mInput.IsKeyDownDX(Key_skill1, True) Then
-            sklsound.CurPos = 0
-            Skl1frame = 10
-            Skl1faceto = fDirection2Angle(iFaceTo)
-            bIgnoreCollision_entity = True
-            iMoveSpeed = iMoveSpeedBase * 5
-            sklsound.Play()
-        End If
-    End Sub
+		'如果还在放skl1那么就不设定frame和方向
+		If Skl1frame > 0 Then
+			Exit Sub
+		End If
+		If mInput.IsKeyDownDX(Key_skill1, True) Then
+			Const MPcost As Int16 = 23
+			If MP >= MPcost Then
+				MP -= MPcost
+				sklsound.CurPos = 0
+				Skl1frame = 10
+				Skl1faceto = fDirection2Angle(iFaceTo)
+				bIgnoreCollision_entity = True
+				iMoveSpeed = iMoveSpeedBase * 5
+				sklsound.ForcePlay()
+			End If
+		End If
+	End Sub
 
 	Protected Friend Overrides Sub Update()
 		MyBase.Update()

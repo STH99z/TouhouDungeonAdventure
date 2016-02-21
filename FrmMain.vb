@@ -5,24 +5,27 @@
 	Public Shared p1 As cPlayer
 	Public Shared e1 As cEnemy
 	Public Shared map As New cMap()
+	Public Shared killCount As Int32 = 0
+	Public Shared spawn As Int16 = 120
+	Public Shared spawncount As Int16 = spawn
 
 	Public Shared Col_charaDmkA As New Collection
-    Public Shared Col_enemyDmkA As New Collection
+	Public Shared Col_enemyDmkA As New Collection
 
-    Private Sub FrmMain_Activated(sender As Object, e As EventArgs) Handles Me.Activated
+	Private Sub FrmMain_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 		p_Active()
 	End Sub
 
-    Private Sub FrmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
-        FrmStart.ExitApplication()
-    End Sub
+	Private Sub FrmMain_FormClosed(sender As Object, e As FormClosedEventArgs) Handles Me.FormClosed
+		FrmStart.ExitApplication()
+	End Sub
 
-    Private Sub FrmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-        bStop = True
-        UnloadDXengine()
-    End Sub
+	Private Sub FrmMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+		bStop = True
+		UnloadDXengine()
+	End Sub
 
-    Private Sub FrmMain_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+	Private Sub FrmMain_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
         'p1.SetPos(e.X, e.Y)
     End Sub
 
@@ -91,23 +94,23 @@
 
 	Public Sub p_MainGame()
 #Region "初始化+循环开始"
-        Dim fi As Integer = 0
-        Do
-            My.Application.DoEvents()
+		Dim fi As Integer = 0
+		Do
+			My.Application.DoEvents()
 #End Region
 
 #Region "绘制+计算"
-            '————————绘制部分————————
-            mGraph.ClearDevice(Color.Purple)
-            mGraph.BeginDevice()
+			'————————绘制部分————————
+			mGraph.ClearDevice(Color.Purple)
+			mGraph.BeginDevice()
 
-            map.DrawMap()
+			map.DrawMap()
 
-            BeginGraph_Forced()
+			BeginGraph_Forced()
 
 			cEnemy.DrawEnemy()
 			p1.DrawC()
-            p1.DrawArea()
+			p1.DrawArea()
 			p1.DrawDmk()
 			'DrawRect(0, 0, 10, 10, Color.FromArgb(255, 0, 0, 0))
 
@@ -117,10 +120,10 @@
 
 			DrawTextPoped()
 
-            If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.NumPad0, False) Then
-                DrawRectF(0, ResH - 50, ResW, ResH, Color.FromArgb(196, Color.Black))
-                DrawText(p1.GetTilePos.ToString, 2, ResH - 48, Color.White)
-            End If
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.NumPad0, False) Then
+				DrawRectF(0, ResH - 50, ResW, ResH, Color.FromArgb(196, Color.Black))
+				DrawText(p1.GetTilePos.ToString, 2, ResH - 48, Color.White)
+			End If
 
 			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.B, False) Then
 				mISrenderer.InitISrenderer_test()
@@ -133,7 +136,7 @@
 			p1.DrawMPbar(400 - 90, 300 - 20, 80, 10)
 
 			DrawText("FPS: " & mGraph.fFPS, 10, ResH - 22, Color.White)
-            DrawText("TotalFrames: " & fi.ToString(), 10, ResH - 42, Color.White)
+			DrawText("TotalFrames: " & fi.ToString(), 10, ResH - 42, Color.White)
 			DrawText("Col_Enemy.Count: " & Col_Enemy.Count, 10, ResH - 62, Color.White)
 
 			mGraph.EndDevice(False)
@@ -142,12 +145,39 @@
 
 #Region "按键检测"
 			'添加新怪
+			'条件检测
+			Dim ce As cEnemy
+			Dim pos As Point = New Point(43, 23)
+			Dim ang As Single = Rnd() * 6.28
+			If spawncount <= 0 Then
+				spawncount = spawn
+				ce = New cEnemy
+				ce.iRadius = 7
+				ce.iNoticeRange = 165
+				ce.HP = 20
+				ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
+				ce.SetPos(pos.X * 32 + Math.Cos(ang) * 150, pos.Y * 32 + Math.Sin(ang) * 150)
+				ce.Register()
+			Else
+				spawncount -= 1
+			End If
+			spawn = 120 / (0.5 + killCount * 0.5)
+			If spawn < 4 Then
+				spawn = 4
+			End If
+			'ce = New cEnemy
+			'ce.iRadius = 7
+			'ce.HP = 20
+			'ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
+			'ce.SetPos(42 * 32, 23 * 32)
+			'ce.Register()
+
 			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.F5) Then
-				Dim ce As cEnemy
 				For i As Single = 0.5 To 6.28 Step 6.28 / 60
-					ce = New cEnemy
+					ce = New cEnemy()
 					ce.iRadius = 7
 					ce.HP = 20
+					ce.iNoticeRange = 150
 					ce.SetTexAnim(ctex_tama, New cAnim(5, 8, 250))
 					ce.SetPos(42 * 32 + Math.Cos(i) * 120, 23 * 32 + Math.Sin(i) * 120)
 					ce.Register()
@@ -163,12 +193,34 @@
 #End Region
 			p1.Move()
 			p1.ProcessDmk()
-            p1.ProcessArea()
-            p1.Shoot()
+			p1.ProcessArea()
+			p1.Shoot()
 			p1.Skill_1()
 			p1.Skill_2()
 			p1.Update()
 			cEnemy.EnemyCollection_Update()
+
+			'检测角色死亡
+			If p1.HP <= 0 Then
+				mGraph.BeginDevice()
+				Dim x As Int16, y As Int16
+				For x = -1 To 1
+					For y = -1 To 1
+						mGraph.DrawText("最终得分：" & killCount.ToString(), 150 + x, 150 + y, Color.Black)
+					Next
+				Next
+				mGraph.DrawText("最终得分：" & killCount.ToString(), 150, 150, Color.Wheat)
+				mGraph.EndDevice()
+				bStop = True
+				Do
+					Application.DoEvents()
+					If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Escape) Then
+						bStop = True
+						UnloadDXengine()
+						Application.Exit()
+					End If
+				Loop
+			End If
 
 			Cam.FocusOn(p1)
 

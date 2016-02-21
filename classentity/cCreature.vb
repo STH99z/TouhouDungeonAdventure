@@ -13,16 +13,28 @@
     Protected Friend ySpeed As Single = 0
     Protected Friend iBuff() As Int16 = {}
     Protected Friend mAnim As cAnim
-    Protected Friend bCollision As Boolean = True
+	Protected Friend bCollision As Boolean = True
+	'Protected  Friend iCarry As citem
 
-    Protected iUnderAttack As Int16 = 0
+	Protected iUnderAttack As Int16 = 0
 
-    Public Sub New()
-        MyBase.New()
-    End Sub
-    'Protected  Friend iCarry As citem
+	Public Sub New()
+		MyBase.New()
+	End Sub
 
-    Protected Friend Overridable Sub Move()
+	Protected Friend Overrides Function ShowDetail() As String
+		Dim s As String = MyBase.ShowDetail()
+		s += "HP=" + HP.ToString() + "  HPmax=" + HPmax.ToString() + vbNewLine
+		s += "MP=" + MP.ToString() + "  MPmax=" + MPmax.ToString() + vbNewLine
+		s += "iMoveSpeedBase=" + iMoveSpeedBase.ToString() + "  iMoveSpeed=" + iMoveSpeed.ToString() + vbNewLine
+		s += "iDirection=" + iDirection.ToString() + vbNewLine
+		s += "xSpeed=" + xSpeed.ToString() + "  ySpeed=" + ySpeed.ToString() + vbNewLine
+		s += "mAnim:" + mAnim.ToString() + vbNewLine
+		s += "bCollision=" + bCollision.ToString() + vbNewLine
+		Return s
+	End Function
+
+	Protected Friend Overridable Sub Move()
         '(@﹏@)~ 待优化
         '大概思路就是player.RECT.四角->检测碰撞
         If bIgnoreCollision_map Then

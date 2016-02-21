@@ -348,7 +348,11 @@
 			End With
 		End If
 		htTileContains(pAtTilePos.X, pAtTilePos.Y).Remove(sKey)
-		Col_Enemy.Remove(Me.sKey)
+		Try
+			Col_Enemy.Remove(Me.sKey)
+		Catch ex As Exception
+			MsgBox(ex.Message + vbNewLine + ShowDetail())
+		End Try
 		Me.Dispose()
 	End Sub
 
@@ -363,7 +367,7 @@
 		'检测碰撞 扣Chara血
 		If IsCollideWith_rect(FrmMain.p1) Then
 			With FrmMain.p1
-				'.HP -= 4
+				.HP -= 4
 			End With
 			Me.OnDeath()
 		End If

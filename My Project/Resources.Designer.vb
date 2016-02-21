@@ -61,7 +61,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  查找类似 True 的本地化字符串。
+        '''  查找类似 false 的本地化字符串。
         '''</summary>
         Friend ReadOnly Property bJumpOP() As String
             Get

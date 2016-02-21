@@ -64,6 +64,8 @@
 			ctex_tama.LoadGraph(d_image & "character\nekotama.png", 4, 4)
 
 			mGraph.BeginDevice()
+			mGraph.ClearDevice(Color.Black)
+			DrawText("试玩Loading...", 180, 150, Color.White)
 			DrawText("选择自机:", 100, 180, Color.White)
 			DrawText("1.琪露诺", 150, 195, Color.FromArgb(255, 37, 97, 150))
 			DrawText("2.妖梦", 210, 195, Color.FromArgb(255, 49, 79, 47))

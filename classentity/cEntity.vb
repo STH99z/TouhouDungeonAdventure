@@ -7,11 +7,23 @@
     Protected Friend bIgnoreCollision_entity As Boolean = False
     Protected Friend bIgnoreCollision_map As Boolean = False
 
-    Public Sub New()
+	Public Sub New()
 
-    End Sub
+	End Sub
 
-    Protected Friend Shared Function fDirection2Angle(ByVal direction As Byte) As Single
+	Protected Friend Overridable Function ShowDetail() As String
+		Dim s As String = ""
+		s += "xPos=" + xPos.ToString() + vbNewLine
+		s += "yPos=" + yPos.ToString() + vbNewLine
+		s += "iRadius=" + iRadius.ToString() + vbNewLine
+		s += "mTex=" + mTex.ToString() + vbNewLine
+		s += vbNewLine
+		s += "bIgnoreCollision_entity=" + bIgnoreCollision_entity.ToString() + vbNewLine
+		s += "bIgnoreCollision_map=" + bIgnoreCollision_map.ToString() + vbNewLine
+		Return s
+	End Function
+
+	Protected Friend Shared Function fDirection2Angle(ByVal direction As Byte) As Single
         Select Case direction
             Case 1
                 Return 2.355

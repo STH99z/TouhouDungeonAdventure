@@ -1,16 +1,34 @@
-﻿Public Class FrmMain
+﻿Imports TouhouDungeonAdventure
+Imports System.Collections.Generic
 
-    Public bFrmMainLoaded As Boolean = False
-    Public Shared c2 As New cTex, ctex_tama As New cTex
-	Public Shared p1 As cPlayer
-	Public Shared e1 As cEnemy
-	Public Shared map As New cMap()
-	Public Shared killCount As Int32 = 0
-	Public Shared spawn As Int16 = 120
-	Public Shared spawncount As Int16 = spawn
+Public Class FrmMain
 
-	Public Shared Col_charaDmkA As New Collection
-	Public Shared Col_enemyDmkA As New Collection
+	Public bFrmMainLoaded As Boolean = False
+	Public c2 As cTex, ctex_tama As cTex
+	Public p1 As cPlayer
+	Public e1 As cEnemy
+	Public map As cMap
+	Public killCount As Int32 = 0
+	Public spawn As Int16 = 120
+	Public spawncount As Int16 = spawn
+
+	Public Col_charaDmkA As Collection
+	Public Col_enemyDmkA As Collection
+
+	Public Sub New()
+		bFrmMainLoaded = False
+		c2 = New cTex
+		ctex_tama = New cTex
+		map = New cMap
+		Col_charaDmkA = New Collection
+		Col_enemyDmkA = New Collection
+
+		' 此调用是设计器所必需的。
+		InitializeComponent()
+
+		' 在 InitializeComponent() 调用之后添加任何初始化。
+
+	End Sub
 
 	Private Sub FrmMain_Activated(sender As Object, e As EventArgs) Handles Me.Activated
 		p_Active()
@@ -89,9 +107,230 @@
 			map.Register()
 			map.MapLoad(d_maps & "testmap.map")
 
+			'p_TestAlgorithm()
 			p_MainGame()
 		End If
 
+	End Sub
+
+	Private Class myColliderStructComparer
+		Implements IComparer(Of Collider)
+
+		Public Function Compare(x As Collider, y As Collider) As Integer Implements IComparer(Of Collider).Compare
+			Return x.pos < y.pos
+			Throw New NotImplementedException()
+		End Function
+	End Class
+	Private Structure Collider
+		Public pos As Single
+		Public ItemID As Integer
+	End Structure
+	Private Structure ID_dist
+		Public ItemID As Integer
+		Public dist As Single
+	End Structure
+	Private Class ent
+		Public pos As PointF
+		Public vec As PointF
+		Public IDflags1 As List(Of ID_dist)
+		Public IDflags2 As List(Of Integer)
+		Public Sub New(x As Single, y As Single)
+			pos.X = x
+			pos.Y = y
+			IDflags1 = New List(Of ID_dist)
+			IDflags2 = New List(Of Integer)
+		End Sub
+	End Class
+	''' <summary>
+	''' 测试算法用方法
+	''' </summary>
+	Public Sub p_TestAlgorithm()
+		'Dim debug As IO.StreamWriter
+		Dim R As Int16 = 1
+		Const N As Integer = 1400
+		Dim x As Single = 0
+		Dim mc As New myColliderStructComparer()
+		Dim l(2) As List(Of Collider)
+		l(1) = New List(Of Collider)
+		l(2) = New List(Of Collider)
+		Dim c(2) As Collider
+		Dim p(N - 1) As ent
+		Dim i As Integer, ii As Integer, iii As Integer
+		For i = 0 To N - 1
+			x = Rnd() * 6.28
+			p(i) = New ent(Math.Cos(x) * x * 24 + 200 + Rnd() * 10 - 5,
+						   Math.Sin(x) * x * 24 + 150 + Rnd() * 10 - 5)
+		Next
+		Do
+			My.Application.DoEvents()
+			mGraph.ClearDevice(Color.Black)
+			mGraph.BeginDevice()
+
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Escape) Then
+				bStop = True
+			End If
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.UpArrow, True) Then
+				R += 1
+			End If
+			If mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.DownArrow, True) Then
+				R -= 1
+				If R < 1 Then R = 1
+			End If
+
+			l(1).Clear()
+			l(2).Clear()
+			For i = 0 To N - 1
+				c(1) = New Collider()
+				With c(1)
+					.pos = p(i).pos.X
+					.ItemID = i
+				End With
+				l(1).Add(c(1))
+				c(2) = New Collider()
+				With c(2)
+					.pos = p(i).pos.Y
+					.ItemID = i
+				End With
+				l(2).Add(c(2))
+			Next
+
+			l(1).Sort(mc)
+			l(2).Sort(mc)
+			'debug = New IO.StreamWriter("debug.txt", False)
+
+			'ProcList1
+			With l(1)
+				For ii = 0 To N - 1
+					Dim dist As Single
+					Dim xs As Single, ys As Single
+					Dim id1 As Int16, id2 As Int16
+					id1 = .Item(ii).ItemID
+					'后序
+					iii = 1
+					If ii + iii >= N Then Continue For
+					While .Item(ii + iii).pos - .Item(ii).pos <= R
+						id2 = .Item(ii + iii).ItemID
+						xs = p(id1).pos.X - p(id2).pos.X
+						ys = p(id1).pos.Y - p(id2).pos.Y
+						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
+						If dist <= R Then
+							Dim iddist As New ID_dist
+							iddist.ItemID = id2
+							iddist.dist = dist
+							p(id1).IDflags1.Add(iddist)
+						End If
+						'debug.WriteLine(res.ToString())
+						iii += 1
+						If ii + iii >= N Then Exit While
+					End While
+					'前序
+					iii = 1
+					If ii - iii < 0 Then Continue For
+					While -(.Item(ii - iii).pos - .Item(ii).pos) <= R
+						id2 = .Item(ii - iii).ItemID
+						xs = p(id1).pos.X - p(id2).pos.X
+						ys = p(id1).pos.Y - p(id2).pos.Y
+						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
+						If dist <= R Then
+							Dim iddist As New ID_dist
+							iddist.ItemID = id2
+							iddist.dist = dist
+							p(id1).IDflags1.Add(iddist)
+						End If
+						'debug.WriteLine(res.ToString())
+						iii += 1
+						If ii - iii < 0 Then Exit While
+					End While
+				Next
+			End With
+			'ProcList2
+			With l(2)
+				For ii = 0 To N - 1
+					Dim dist As Single
+					Dim xs As Single, ys As Single
+					Dim id1 As Int16, id2 As Int16
+					id1 = .Item(ii).ItemID
+					'后序
+					iii = 1
+					If ii + iii >= N Then Continue For
+					While .Item(ii + iii).pos - .Item(ii).pos <= R
+						id2 = .Item(ii + iii).ItemID
+						xs = p(id1).pos.X - p(id2).pos.X
+						ys = p(id1).pos.Y - p(id2).pos.Y
+						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
+						If dist <= R Then
+							p(id1).IDflags2.Add(id2)
+						End If
+						'debug.WriteLine(res.ToString())
+						iii += 1
+						If ii + iii >= N Then Exit While
+					End While
+					'前序
+					iii = 1
+					If ii - iii < 0 Then Continue For
+					While -(.Item(ii - iii).pos - .Item(ii).pos) <= R
+						id2 = .Item(ii - iii).ItemID
+						xs = p(id1).pos.X - p(id2).pos.X
+						ys = p(id1).pos.Y - p(id2).pos.Y
+						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
+						If dist <= R Then
+							p(id1).IDflags2.Add(id2)
+						End If
+						'debug.WriteLine(res.ToString())
+						iii += 1
+						If ii - iii < 0 Then Exit While
+					End While
+				Next
+			End With
+
+			'debug.Close()
+			'debug.Dispose()
+			For id1 = 0 To N - 1
+				For ii = 0 To p(id1).IDflags1.Count - 1
+					Dim id2 As Integer = p(id1).IDflags1.Item(ii).ItemID
+					Dim dist As Single
+					Dim xs As Single, ys As Single
+					If p(id1).IDflags2.Contains(id2) Then
+						xs = p(id1).pos.X - p(id2).pos.X
+						ys = p(id1).pos.Y - p(id2).pos.Y
+						dist = p(id1).IDflags1.Item(ii).dist
+						p(id1).vec.X -= xs / dist
+						p(id1).vec.Y -= ys / dist
+						p(id2).vec.X += xs / dist
+						p(id2).vec.Y += ys / dist
+						Drawline(p(id1).pos.X, p(id1).pos.Y, p(id2).pos.X, p(id2).pos.Y, Color.DarkGray)
+					End If
+				Next
+			Next
+			'DrawPoints
+			DrawPoint_Begin()
+			For i = 0 To N - 1
+				With p(i)
+					.pos.X -= .vec.X
+					.pos.Y -= .vec.Y
+					.IDflags1.Clear()
+					.IDflags2.Clear()
+					.vec = New PointF()
+					DrawPoint_Add(.pos.X, .pos.Y, Color.White)
+				End With
+			Next
+			DrawPoint_End()
+
+			DrawText("FPS:" + mGraph.fFPS.ToString(), 1, 1, Color.White)
+			DrawText("L1.count:" + l(1).Count.ToString() + vbNewLine +
+					 "L2.count:" + l(2).Count.ToString(),
+					 1, ResH - 40, Color.White)
+			DrawText("Radius:" + R.ToString(), 1, ResH - 60, Color.Green)
+
+			mInput.RefreshKeyDX()
+			mGraph.EndDevice(False)
+			device.Present()
+
+			'While Not mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.Z, False)
+			'	Application.DoEvents()
+			'	mInput.RefreshKeyDX()
+			'End While
+		Loop Until bStop
 	End Sub
 
 	Public Sub p_MainGame()
@@ -226,38 +465,38 @@
 
 			Cam.FocusOn(p1)
 
-            RefreshKeyDX()
+			mInput.RefreshKeyDX()
 
 #Region "帧控制"
 			'帧控制
 			If False Then
-                Do Until mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.DownArrow, False) Or bStop
-                    Application.DoEvents()
-                Loop
-            End If
-            If False Then
-                Dim ti As Long = timeGetTime()
-                Do Until (timeGetTime - ti) > 999 Or bStop
-                    Application.DoEvents()
-                Loop
-            End If
-            fi += 1
+				Do Until mInput.IsKeyDownDX(Microsoft.DirectX.DirectInput.Key.DownArrow, False) Or bStop
+					Application.DoEvents()
+				Loop
+			End If
+			If False Then
+				Dim ti As Long = timeGetTime()
+				Do Until (timeGetTime - ti) > 999 Or bStop
+					Application.DoEvents()
+				Loop
+			End If
+			fi += 1
 #End Region
 
 #Region "呈递"
-            '呈递
-            device.Present()
-        Loop Until bStop
+			'呈递
+			device.Present()
+		Loop Until bStop
 #End Region
-    End Sub
+	End Sub
 
-    Private Sub FrmMain_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
-        If bFrmMainLoaded Then
-            If Me.WindowState = FormWindowState.Maximized Then
-                bStop = True
-                UnloadDXengine()
-            Else
-                With mGraph.presentParams
+	Private Sub FrmMain_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
+		If bFrmMainLoaded Then
+			If Me.WindowState = FormWindowState.Maximized Then
+				bStop = True
+				UnloadDXengine()
+			Else
+				With mGraph.presentParams
                     'ResW = Me.ClientSize.Width
                     'ResH = Me.ClientSize.Height
                     'If (ResW Mod 2 = 1) Or (ResH Mod 2 = 1) Then
@@ -265,10 +504,10 @@
                     '    ResH += 1
                     'End If
                     .BackBufferWidth = ResW
-                    .BackBufferHeight = ResH
-                End With
-                device.Reset(mGraph.presentParams)
-            End If
-        End If
-    End Sub
+					.BackBufferHeight = ResH
+				End With
+				device.Reset(mGraph.presentParams)
+			End If
+		End If
+	End Sub
 End Class

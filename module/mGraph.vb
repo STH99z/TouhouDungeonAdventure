@@ -25,8 +25,11 @@ Module mGraph
     Public fFPS As Integer = 0 'fps值，外部可调用
     Public bSpriteBegined As Boolean = False
 
-    '初始化DX9设备
-    Public Sub InitDXBasic(ByRef frm As Form, w As Int16, h As Int16)
+	'绘制点集优化
+	Private vpoints() As CustomVertex.TransformedColored
+
+	'初始化DX9设备
+	Public Sub InitDXBasic(ByRef frm As Form, w As Int16, h As Int16)
         Randomize()
         ATofst_fill()
         'frm.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
@@ -35,12 +38,13 @@ Module mGraph
         presentParams.BackBufferFormat = Format.Unknown
         presentParams.BackBufferWidth = w
         presentParams.BackBufferHeight = h
-        presentParams.MultiSample = MultiSampleType.None  '多重采样=0
+		presentParams.MultiSample = MultiSampleType.None  '多重采样=0
+		'MsgBox(presentParams.PresentationInterval.ToString())
 
-        'presentParams.EnableAutoDepthStencil = True
-        'presentParams.AutoDepthStencilFormat = DepthFormat.D16
-        device = New Device(0, DeviceType.Hardware, frm, CreateFlags.SoftwareVertexProcessing, presentParams)
-        device.VertexFormat = CustomVertex.TransformedColored.Format
+		'presentParams.EnableAutoDepthStencil = True
+		'presentParams.AutoDepthStencilFormat = DepthFormat.D16
+		device = New Device(0, DeviceType.Hardware, frm, CreateFlags.SoftwareVertexProcessing, presentParams)
+		device.VertexFormat = CustomVertex.TransformedColored.Format
         m_Sprite = New Sprite(device)
         m_Sprite_text = New Sprite(device)
         '为了能响应键盘事件，该属性必须设为true         
@@ -79,10 +83,23 @@ Module mGraph
 
     '画点
     Public Sub DrawPoint(x As Integer, y As Integer, c As Color)
-        Dim v As CustomVertex.TransformedColored
-        v = CCV(x, y, c)
-        device.DrawUserPrimitives(PrimitiveType.PointList, 1, v)
-    End Sub
+		Dim v As CustomVertex.TransformedColored
+		v = CCV(x, y, c)
+		device.DrawUserPrimitives(PrimitiveType.PointList, 1, v)
+	End Sub
+
+	Public Sub DrawPoint_Begin()
+		ReDim vpoints(0)
+	End Sub
+
+	Public Sub DrawPoint_Add(x As Integer, y As Integer, c As Color)
+		vpoints(vpoints.Length - 1) = CCV(x, y, c)
+		ReDim Preserve vpoints(vpoints.Length)
+	End Sub
+
+	Public Sub DrawPoint_End()
+		device.DrawUserPrimitives(PrimitiveType.PointList, vpoints.Length - 1, vpoints)
+	End Sub
 
     '画线
     Public Sub Drawline(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer, c As Color)

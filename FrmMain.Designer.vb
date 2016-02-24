@@ -22,17 +22,17 @@ Partial Class FrmMain
     '不要使用代码编辑器修改它。
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.SuspendLayout()
-        '
-        'FrmMain
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 600)
-        Me.Name = "FrmMain"
-        Me.Text = "u"
-        Me.ResumeLayout(False)
+		Me.SuspendLayout()
+		'
+		'FrmMain
+		'
+		Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
+		Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+		Me.ClientSize = New System.Drawing.Size(800, 600)
+		Me.Name = "FrmMain"
+		Me.Text = "TDA"
+		Me.ResumeLayout(False)
 
-    End Sub
+	End Sub
 
 End Class

@@ -6,21 +6,22 @@
 	Protected Friend MPpointer As Single
 
 	Protected Friend iInvincibleTime As Int16
+	Protected Friend bVisible As Boolean
 
 	Protected Friend iStatus As Int16 = 0
-    Protected Friend iLastDirection As Byte = 0
-    Protected Friend iFaceTo As Byte = 2
+	Protected Friend iLastDirection As Byte = 0
+	Protected Friend iFaceTo As Byte = 2
 
-    Protected Friend col_dmk As New Collection
-    Protected Friend col_area As New Collection
+	Protected Friend col_dmk As New Collection
+	Protected Friend col_area As New Collection
 
-    Protected Friend iBaseDamage As Int16 = 1
-    Protected Friend iMaxShoot As Int16 = 1
-    Protected Friend iCurShoot As Int16 = 0
+	Protected Friend iBaseDamage As Int16 = 1
+	Protected Friend iMaxShoot As Int16 = 1
+	Protected Friend iCurShoot As Int16 = 0
 
-    Protected Friend sKey As String
-    Protected Friend sCharaName As String = "None"
-    Protected Friend iClass As CharacterClass
+	Protected Friend sKey As String
+	Protected Friend sCharaName As String = "None"
+	Protected Friend iClass As CharacterClass
 
 	Public Sub New()
 		MyBase.New()
@@ -52,27 +53,36 @@
 	End Sub
 
 	Enum CharacterClass
-        none = 0
-        short_range = 1
-        long_range = 2
-        priest = 3
-        support = 4
-        unknown = -1
-    End Enum
+		none = 0
+		short_range = 1
+		long_range = 2
+		priest = 3
+		support = 4
+		unknown = -1
+	End Enum
 
-    Protected Friend Sub InitCollisionSetting(Optional ByVal pRadius As Int16 = 4)
-        iRadius = pRadius
-        iWidthHalf = iRadius
-        iHeightHalf = iRadius
-    End Sub
+	Protected Friend Sub InitCollisionSetting(Optional ByVal pRadius As Int16 = 4)
+		iRadius = pRadius
+		iWidthHalf = iRadius
+		iHeightHalf = iRadius
+	End Sub
 
-    Protected Friend Sub InitCollisionSetting(Optional ByVal pWidth As Int16 = 11, Optional ByVal pHeight As Int16 = 4)
-        iRadius = (pWidth + pHeight) / 2
-        iWidthHalf = pWidth
-        iHeightHalf = pHeight
-    End Sub
+	Protected Friend Sub InitCollisionSetting(Optional ByVal pWidth As Int16 = 11, Optional ByVal pHeight As Int16 = 4)
+		iRadius = (pWidth + pHeight) / 2
+		iWidthHalf = pWidth
+		iHeightHalf = pHeight
+	End Sub
 
-    Protected Friend Sub Register()
+	Protected Friend Sub SetVisibility(inv As Boolean)
+		bVisible = inv
+		If inv Then
+			mAnim.Args.iAlpha = 255
+		Else
+			mAnim.Args.iAlpha = 128
+		End If
+	End Sub
+
+	Protected Friend Sub Register()
         Me.sKey = "c" & iKey
         iKey += 1
         Col_Chara.Add(Me, Me.sKey)
@@ -166,6 +176,7 @@
 			If iLastDirection <> iDirection Then
 				If iDirection = 5 Then
 					mAnim = New cAnim(mAnim.Args.idList(1), mAnim.Args.idList(1), 200)
+					SetVisibility(bVisible)
 					Select Case iLastDirection
 						Case 1, 4, 7
 							mAnim.Args.xMirror = True
@@ -183,6 +194,7 @@
 						Case 2
 							mAnim = New cAnim({13, 14, 15, 14}, 150)
 					End Select
+					SetVisibility(bVisible)
 					Select Case iDirection
 						Case 1, 4, 7
 							mAnim.Args.xMirror = True

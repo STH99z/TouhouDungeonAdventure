@@ -7,8 +7,9 @@
         Public xScale As Single, yScale As Single
         Public xMirror As Boolean, yMirror As Boolean
         Public fRotate As Single
-        Public iR As Byte, iG As Byte, iB As Byte
-        Public iFrameInterval As Long
+		Public iR As Byte, iG As Byte, iB As Byte
+		Public iAlpha As Byte
+		Public iFrameInterval As Long
     End Structure
     Protected Friend Args As TexArgs
     Protected Friend iLastTick As Long
@@ -27,8 +28,9 @@
             tex.SetScale(.xScale, .yScale)
             tex.SetMirror(.xMirror, .yMirror)
             tex.SetRotate(.fRotate)
-            tex.SetColor(.iR, .iG, .iB)
-        End With
+			tex.SetColor(.iR, .iG, .iB)
+			tex.SetAlpha(.iAlpha)
+		End With
     End Sub
 
     Public Sub New(indexfrom As Int16, indexto As Int16, interval As Int16)
@@ -44,8 +46,9 @@
                 .yMirror = False
                 .iR = 255
                 .iG = 255
-                .iB = 255
-                .fRotate = 0
+				.iB = 255
+				.iAlpha = 255
+				.fRotate = 0
                 .iFrameInterval = 3600000
             End With
         Else
@@ -60,8 +63,9 @@
                 .yMirror = False
                 .iR = 255
                 .iG = 255
-                .iB = 255
-                .fRotate = 0
+				.iB = 255
+				.iAlpha = 255
+				.fRotate = 0
                 .iFrameInterval = interval
             End With
         End If
@@ -79,8 +83,9 @@
             .yMirror = False
             .iR = 255
             .iG = 255
-            .iB = 255
-            .fRotate = 0
+			.iB = 255
+			.iAlpha = 255
+			.fRotate = 0
             .iFrameInterval = interval
         End With
         iLastTick = timeGetTime()

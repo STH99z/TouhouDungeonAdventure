@@ -71,15 +71,15 @@ Module mGraph
     End Sub
 
     '创建一个顶点结构，模块内部使用
-    Private Function CCV(x As Single, y As Single, c As Color) As CustomVertex.TransformedColored
-        CCV.Position = New Vector4(x, y, 0, 1.0F)
-        CCV.Color = c.ToArgb
-    End Function
+    Public Function CCV(x As Single, y As Single, c As Color) As CustomVertex.TransformedColored
+		CCV.Position = New Vector4(x, y, 0, 1.0F)
+		CCV.Color = c.ToArgb
+	End Function
 
-    Private Function CCV3(x As Single, y As Single, z As Single, c As Color) As CustomVertex.TransformedColored
-        CCV3.Position = New Vector4(x, y, z, 1.0F)
-        CCV3.Color = c.ToArgb
-    End Function
+	Public Function CCV3(x As Single, y As Single, z As Single, c As Color) As CustomVertex.TransformedColored
+		CCV3.Position = New Vector4(x, y, z, 1.0F)
+		CCV3.Color = c.ToArgb
+	End Function
 
     '画点
     Public Sub DrawPoint(x As Integer, y As Integer, c As Color)

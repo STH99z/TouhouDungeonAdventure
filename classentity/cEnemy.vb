@@ -62,19 +62,21 @@
     Protected Friend Sub CheckNotice()
         'Dim dist As Single = iNoticeRange + 1
         Dim disttemp As Single
-        For Each e As cPlayer In Col_Chara
-            disttemp = e.GetDistance(Me)
-			If disttemp <= iNoticeRange Then
-				'If disttemp < dist Then
-				'    dist = disttemp
-				'    Active(e)
-				'End If
-				Active(e)
-			ElseIf disttemp >= iNoticeRange * 1.3 Then
-				Deactive()
+		For Each e As cPlayer In Col_Chara
+			If e.bVisible Then
+				disttemp = e.GetDistance(Me)
+				If disttemp <= iNoticeRange Then
+					'If disttemp < dist Then
+					'    dist = disttemp
+					'    Active(e)
+					'End If
+					Active(e)
+				ElseIf disttemp >= iNoticeRange * 1.3 Then
+					Deactive()
+				End If
 			End If
-        Next
-    End Sub
+		Next
+	End Sub
 	''' <summary>
 	''' 清空每个Enemy的碰撞偏移
 	''' </summary>
@@ -285,19 +287,6 @@
 			ce.CollideWithAll_ReleaseBuffer() '释放碰撞
 			ce.Process() '敌人消除&移动
 		Next
-
-		'敌人洞察玩家-旧版
-		'妈的这里我要干嘛来着？
-		''If Col_Enemy.Count = 0 Then Exit Sub
-		''      Dim e As cEnemy
-		''      For i As Int16 = 0 To 4
-		''          If (iCheckNoticeProc + i) > Col_Enemy.Count Then
-		''              iCheckNoticeProc = 1 - i
-		''          End If
-		''          e = Col_Enemy.Item(iCheckNoticeProc + i)
-		''	e.CheckNotice()
-		''Next
-		''      iCheckNoticeProc += 5
 
 		'敌人洞察玩家
 		Dim e As cEnemy

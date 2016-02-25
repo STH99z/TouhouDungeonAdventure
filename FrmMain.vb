@@ -107,60 +107,82 @@ Public Class FrmMain
 			map.Register()
 			map.MapLoad(d_maps & "testmap.map")
 
-			'p_TestAlgorithm()
-			p_MainGame()
+			p_TestAlgorithm()
+			'p_MainGame()
 		End If
 
 	End Sub
 
-	Private Class myColliderStructComparer
+	Private Class ColliderMain
+		Public Sub New(a As Integer, x As Single, y As Single)
+			id = a
+			posX = x
+			posY = y
+			vecX = 0
+			vecY = 0
+			flagX = 0
+			flagY = 0
+		End Sub
+		Public id As Integer
+		Public posX As Single, posY As Single
+		Public vecX As Single, vecY As Single
+		Public flagX As Integer, flagY As Integer
+		Public Sub ReleaseVec()
+			posX += vecX
+			posY += vecY
+			vecX = 0
+			vecY = 0
+		End Sub
+	End Class
+	Private Class Collider
+		Public Sub New(id As Integer, pos As Single)
+			Me.id = id
+			Me.pos = pos
+		End Sub
+		Public id As Integer
+		Public pos As Single
+	End Class
+	Private Class MyComparer
 		Implements IComparer(Of Collider)
-
 		Public Function Compare(x As Collider, y As Collider) As Integer Implements IComparer(Of Collider).Compare
 			Return x.pos < y.pos
 			Throw New NotImplementedException()
 		End Function
 	End Class
-	Private Structure Collider
-		Public pos As Single
-		Public ItemID As Integer
-	End Structure
-	Private Structure ID_dist
-		Public ItemID As Integer
-		Public dist As Single
-	End Structure
-	Private Class ent
-		Public pos As PointF
-		Public vec As PointF
-		Public IDflags1 As List(Of ID_dist)
-		Public IDflags2 As List(Of Integer)
-		Public Sub New(x As Single, y As Single)
-			pos.X = x
-			pos.Y = y
-			IDflags1 = New List(Of ID_dist)
-			IDflags2 = New List(Of Integer)
-		End Sub
-	End Class
+	Private Sub DoCollision(cm1 As ColliderMain, cm2 As ColliderMain)
+		Dim xs As Single = cm1.posX - cm2.posX
+		Dim ys As Single = cm1.posY - cm2.posY
+		If xs = 0 And ys = 0 Then Exit Sub
+		Dim dist As Single = Math.Sqrt(xs * xs + ys * ys)
+		If dist <= R Then
+			Dim v(1) As Microsoft.DirectX.Direct3D.CustomVertex.TransformedColored
+			v(0) = CCV(cm1.posX, cm1.posY, Color.Yellow)
+			v(1) = CCV(cm2.posX, cm2.posY, Color.Orange)
+			device.DrawUserPrimitives(Microsoft.DirectX.Direct3D.PrimitiveType.LineList, 1, v)
+			cm1.vecX += xs / dist
+			cm1.vecY += ys / dist
+			cm2.vecX -= xs / dist
+			cm2.vecY -= ys / dist
+		End If
+	End Sub
+	Private Sub Link(cm1 As ColliderMain, cm2 As ColliderMain)
+		mGraph.Drawline(cm1.posX, cm1.posY, cm2.posX, cm2.posY, Color.DarkGray)
+	End Sub
+	Public R As Int16 = 1
 	''' <summary>
 	''' 测试算法用方法
 	''' </summary>
 	Public Sub p_TestAlgorithm()
-		'Dim debug As IO.StreamWriter
-		Dim R As Int16 = 1
-		Const N As Integer = 1400
-		Dim x As Single = 0
-		Dim mc As New myColliderStructComparer()
-		Dim l(2) As List(Of Collider)
-		l(1) = New List(Of Collider)
-		l(2) = New List(Of Collider)
-		Dim c(2) As Collider
-		Dim p(N - 1) As ent
-		Dim i As Integer, ii As Integer, iii As Integer
-		For i = 0 To N - 1
-			x = Rnd() * 6.28
-			p(i) = New ent(Math.Cos(x) * x * 24 + 200 + Rnd() * 10 - 5,
-						   Math.Sin(x) * x * 24 + 150 + Rnd() * 10 - 5)
+		'int main()
+		Dim N As Integer = 1400
+		Dim cs As List(Of ColliderMain) = New List(Of ColliderMain)
+		Dim csX As List(Of Collider), csY As List(Of Collider)
+
+		For i As Integer = 0 To N - 1
+			cs.Add(New ColliderMain(i, Rnd() * ResW, Rnd() * ResH))
 		Next
+
+		'Run
 		Do
 			My.Application.DoEvents()
 			mGraph.ClearDevice(Color.Black)
@@ -177,150 +199,77 @@ Public Class FrmMain
 				If R < 1 Then R = 1
 			End If
 
-			l(1).Clear()
-			l(2).Clear()
-			For i = 0 To N - 1
-				c(1) = New Collider()
-				With c(1)
-					.pos = p(i).pos.X
-					.ItemID = i
-				End With
-				l(1).Add(c(1))
-				c(2) = New Collider()
-				With c(2)
-					.pos = p(i).pos.Y
-					.ItemID = i
-				End With
-				l(2).Add(c(2))
+			mGraph.DrawPoint_Begin()
+			For Each v As ColliderMain In cs
+				v.ReleaseVec()
+				mGraph.DrawPoint_Add(v.posX, v.posY, Color.White)
+			Next
+			mGraph.DrawPoint_End()
+			'Code Here
+			Dim clock As Long = timeGetTime()
+
+			csX = New List(Of Collider)
+			csY = New List(Of Collider)
+
+			For i As Integer = 0 To N - 1
+				csX.Add(New Collider(i, cs(i).posX))
+				csY.Add(New Collider(i, cs(i).posY))
 			Next
 
-			l(1).Sort(mc)
-			l(2).Sort(mc)
-			'debug = New IO.StreamWriter("debug.txt", False)
+			Dim myc As New MyComparer
+			csX.Sort(myc)
+			csY.Sort(myc)
 
-			'ProcList1
-			With l(1)
-				For ii = 0 To N - 1
-					Dim dist As Single
-					Dim xs As Single, ys As Single
-					Dim id1 As Int16, id2 As Int16
-					id1 = .Item(ii).ItemID
-					'后序
-					iii = 1
-					If ii + iii >= N Then Continue For
-					While .Item(ii + iii).pos - .Item(ii).pos <= R
-						id2 = .Item(ii + iii).ItemID
-						xs = p(id1).pos.X - p(id2).pos.X
-						ys = p(id1).pos.Y - p(id2).pos.Y
-						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
-						If dist <= R Then
-							Dim iddist As New ID_dist
-							iddist.ItemID = id2
-							iddist.dist = dist
-							p(id1).IDflags1.Add(iddist)
-						End If
-						'debug.WriteLine(res.ToString())
-						iii += 1
-						If ii + iii >= N Then Exit While
-					End While
-					'前序
-					iii = 1
-					If ii - iii < 0 Then Continue For
-					While -(.Item(ii - iii).pos - .Item(ii).pos) <= R
-						id2 = .Item(ii - iii).ItemID
-						xs = p(id1).pos.X - p(id2).pos.X
-						ys = p(id1).pos.Y - p(id2).pos.Y
-						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
-						If dist <= R Then
-							Dim iddist As New ID_dist
-							iddist.ItemID = id2
-							iddist.dist = dist
-							p(id1).IDflags1.Add(iddist)
-						End If
-						'debug.WriteLine(res.ToString())
-						iii += 1
-						If ii - iii < 0 Then Exit While
-					End While
-				Next
-			End With
-			'ProcList2
-			With l(2)
-				For ii = 0 To N - 1
-					Dim dist As Single
-					Dim xs As Single, ys As Single
-					Dim id1 As Int16, id2 As Int16
-					id1 = .Item(ii).ItemID
-					'后序
-					iii = 1
-					If ii + iii >= N Then Continue For
-					While .Item(ii + iii).pos - .Item(ii).pos <= R
-						id2 = .Item(ii + iii).ItemID
-						xs = p(id1).pos.X - p(id2).pos.X
-						ys = p(id1).pos.Y - p(id2).pos.Y
-						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
-						If dist <= R Then
-							p(id1).IDflags2.Add(id2)
-						End If
-						'debug.WriteLine(res.ToString())
-						iii += 1
-						If ii + iii >= N Then Exit While
-					End While
-					'前序
-					iii = 1
-					If ii - iii < 0 Then Continue For
-					While -(.Item(ii - iii).pos - .Item(ii).pos) <= R
-						id2 = .Item(ii - iii).ItemID
-						xs = p(id1).pos.X - p(id2).pos.X
-						ys = p(id1).pos.Y - p(id2).pos.Y
-						dist = Math.Sqrt(xs ^ 2 + ys ^ 2)
-						If dist <= R Then
-							p(id1).IDflags2.Add(id2)
-						End If
-						'debug.WriteLine(res.ToString())
-						iii += 1
-						If ii - iii < 0 Then Exit While
-					End While
-				Next
-			End With
+			Dim mapX As List(Of Integer), mapY As List(Of Integer)
+			mapX = New List(Of Integer)(1400)
+			mapY = New List(Of Integer)(1400)
+			For i As Integer = 0 To N - 1
+				mapX.Add(0)
+				mapY.Add(0)
+			Next
 
-			'debug.Close()
-			'debug.Dispose()
-			For id1 = 0 To N - 1
-				For ii = 0 To p(id1).IDflags1.Count - 1
-					Dim id2 As Integer = p(id1).IDflags1.Item(ii).ItemID
-					Dim dist As Single
-					Dim xs As Single, ys As Single
-					If p(id1).IDflags2.Contains(id2) Then
-						xs = p(id1).pos.X - p(id2).pos.X
-						ys = p(id1).pos.Y - p(id2).pos.Y
-						dist = p(id1).IDflags1.Item(ii).dist
-						p(id1).vec.X -= xs / dist
-						p(id1).vec.Y -= ys / dist
-						p(id2).vec.X += xs / dist
-						p(id2).vec.Y += ys / dist
-						Drawline(p(id1).pos.X, p(id1).pos.Y, p(id2).pos.X, p(id2).pos.Y, Color.DarkGray)
+			For i As Integer = 0 To N - 1
+				mapX(csX(i).id) = i
+				Dim j As Integer = 1
+				While i + j < N
+					If csX(i + j).pos - csX(i).pos > R Then Exit While
+					j += 1
+				End While
+				cs(csX(i).id).flagX = j - 1
+			Next
+			For i As Integer = 0 To N - 1
+				mapY(csY(i).id) = i
+				Dim j As Integer = 1
+				While i + j < N
+					If csY(i + j).pos - csY(i).pos > R Then Exit While
+					j += 1
+				End While
+				cs(csY(i).id).flagY = j - 1
+			Next
+			mGraph.DrawText(timeGetTime() - clock, 1, 20, Color.White)
+			For Each v As ColliderMain In cs
+				If v.flagX Or v.flagY Then
+					If v.flagX < v.flagY Then
+						For j As Integer = 0 To v.flagX
+							Dim id2 As Integer = csX(mapX(v.id) + j).id
+							DoCollision(v, cs.Item(id2))
+							'Link(v, cs.Item(id2))
+						Next
+					Else
+						For j As Integer = 0 To v.flagY
+							Dim id2 As Integer = csY(mapY(v.id) + j).id
+							DoCollision(v, cs.Item(id2))
+							'Link(v, cs.Item(id2))
+						Next
 					End If
-				Next
+				Else
+					'Nothing
+				End If
 			Next
-			'DrawPoints
-			DrawPoint_Begin()
-			For i = 0 To N - 1
-				With p(i)
-					.pos.X -= .vec.X
-					.pos.Y -= .vec.Y
-					.IDflags1.Clear()
-					.IDflags2.Clear()
-					.vec = New PointF()
-					DrawPoint_Add(.pos.X, .pos.Y, Color.White)
-				End With
-			Next
-			DrawPoint_End()
+			mGraph.DrawText(timeGetTime() - clock, 1, 40, Color.White)
 
 			DrawText("FPS:" + mGraph.fFPS.ToString(), 1, 1, Color.White)
-			DrawText("L1.count:" + l(1).Count.ToString() + vbNewLine +
-					 "L2.count:" + l(2).Count.ToString(),
-					 1, ResH - 40, Color.White)
-			DrawText("Radius:" + R.ToString(), 1, ResH - 60, Color.Green)
+			DrawText("Radius:" + R.ToString(), 1, ResH - 20, Color.Green)
 
 			mInput.RefreshKeyDX()
 			mGraph.EndDevice(False)
@@ -336,8 +285,10 @@ Public Class FrmMain
 	Public Sub p_MainGame()
 #Region "初始化+循环开始"
 		Dim fi As Integer = 0
+		p1.bCollision = False
+		p1.SetVisibility(False)
 		Do
-			My.Application.DoEvents()
+		My.Application.DoEvents()
 #End Region
 
 #Region "绘制+计算"
@@ -403,8 +354,8 @@ Public Class FrmMain
 				spawncount -= 1
 			End If
 			spawn = 120 / (0.5 + killCount * 0.5)
-			If spawn < 4 Then
-				spawn = 4
+			If spawn < 2 Then
+				spawn = 2
 			End If
 			'ce = New cEnemy
 			'ce.iRadius = 7
